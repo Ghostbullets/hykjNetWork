@@ -1,4 +1,4 @@
-package com.hykj.hykjnetwork.yibook.rec;
+package com.hykj.network.yibook.rec;
 
 /**
  * 壹账本接口返回数据基类

@@ -1,4 +1,4 @@
-package com.hykj.hykjnetwork.xxgj.callback;
+package com.hykj.network.xxgj.callback;
 
 /**
  * 回调接口

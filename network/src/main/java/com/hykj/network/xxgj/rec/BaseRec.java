@@ -1,4 +1,4 @@
-package com.hykj.hykjnetwork.xxgj.rec;
+package com.hykj.network.xxgj.rec;
 
 /**
  * 接口返回数据基类

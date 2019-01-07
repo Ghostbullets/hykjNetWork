@@ -1,9 +1,9 @@
-package com.hykj.hykjnetwork.xxgj.req;
+package com.hykj.network.yibook.req;
 
 
 import com.google.gson.Gson;
-import com.hykj.hykjnetwork.xxgj.callback.ObtainCallBack;
-import com.hykj.hykjnetwork.xxgj.rec.BaseRec;
+import com.hykj.hykjnetwork.yibook.callback.ObtainCallBack;
+import com.hykj.hykjnetwork.yibook.rec.BaseRec;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 

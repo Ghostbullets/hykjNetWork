@@ -1,4 +1,4 @@
-package com.hykj.hykjnetwork.yibook.callback;
+package com.hykj.network.yibook.callback;
 
 /**
  * 回调接口

@@ -1,4 +1,4 @@
-package com.hykj.hykjnetwork.xxgj.callback;
+package com.hykj.network.xxgj.callback;
 
 
 import com.google.gson.Gson;

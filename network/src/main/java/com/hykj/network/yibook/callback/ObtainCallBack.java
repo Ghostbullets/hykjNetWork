@@ -1,4 +1,4 @@
-package com.hykj.hykjnetwork.yibook.callback;
+package com.hykj.network.yibook.callback;
 
 
 import com.google.gson.Gson;
