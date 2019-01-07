@@ -2,8 +2,9 @@ package com.hykj.network.yibook.req;
 
 
 import com.google.gson.Gson;
-import com.hykj.hykjnetwork.yibook.callback.ObtainCallBack;
-import com.hykj.hykjnetwork.yibook.rec.BaseRec;
+
+import com.hykj.network.yibook.callback.ObtainCallBack;
+import com.hykj.network.yibook.rec.BaseRec;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -44,7 +45,7 @@ public abstract class AbsReq<T extends BaseRec> {
                 Map.Entry<String, String> next = iterator.next();
                 String key = next.getKey();
                 String value = next.getValue();
-                if (value==null)
+                if (value == null)
                     continue;
                 params.put(key, value);
             }
