@@ -105,6 +105,8 @@ public abstract class AbsReq<T extends BaseRec> {
         for (Field field : fields) {
             try {
                 String key = field.getName();
+                if ("serialVersionUID".equals(key))
+                    continue;
                 field.setAccessible(true);
                 Object obj = field.get(this);
                 if (obj == null)
