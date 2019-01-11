@@ -60,7 +60,11 @@ public abstract class AbsReq<T extends BaseRec> {
 
             @Override
             public void onResponse(String response, int id) {
-                T rec = (T) callBack.parseNetworkResponse(response);
+                //这个项目有点怪，当请求的状态值不是0的时候，result返回的就是字符串
+                BaseRec rec = new Gson().fromJson(response, BaseRec.class);
+                if (rec.getStatus() == 0) {
+                    rec = callBack.parseNetworkResponse(response);
+                }
                 callBack.onResponse(o, rec);
                 callBack.onFinish();
             }
