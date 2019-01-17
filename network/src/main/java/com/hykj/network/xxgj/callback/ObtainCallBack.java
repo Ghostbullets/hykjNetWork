@@ -27,6 +27,10 @@ public abstract class ObtainCallBack<T extends BaseRec> implements BaseCallBack<
 
     @Override
     public T parseNetworkResponse(String result) {
-        return new Gson().fromJson(result, t);
+        try {
+            return new Gson().fromJson(result, t);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
