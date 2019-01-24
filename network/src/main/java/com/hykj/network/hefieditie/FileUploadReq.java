@@ -1,11 +1,14 @@
 package com.hykj.network.hefieditie;
 
+import android.text.TextUtils;
+
 import com.hykj.network.hefieditie.callback.CallBack;
 import com.hykj.network.utils.ReflectUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +30,7 @@ public abstract class FileUploadReq {
     private String uploadUrl;//上传url地址
     private String fileName;//文件传入参数名
     private List<File> fileList = new ArrayList<>();//文件列表
+    private Map<String, String> headers = new LinkedHashMap<>();//头部参数
 
     public FileUploadReq(List<String> filePaths, String uploadUrl, String fileName) {
         this.uploadUrl = uploadUrl;
@@ -36,6 +40,23 @@ public abstract class FileUploadReq {
                 fileList.add(new File(filePath));
             }
         }
+    }
+
+    public FileUploadReq(String uploadUrl, String fileName, String... filePaths) {
+        this.uploadUrl = uploadUrl;
+        this.fileName = fileName;
+        if (filePaths != null) {
+            for (String filePath : filePaths) {
+                fileList.add(new File(filePath));
+            }
+        }
+    }
+
+    public FileUploadReq(String uploadUrl, String fileName, File... fileList) {
+        this.uploadUrl = uploadUrl;
+        this.fileName = fileName;
+        if (fileList != null)
+            this.fileList.addAll(Arrays.asList(fileList));
     }
 
     public FileUploadReq(String uploadUrl, String fileName, List<File> fileList) {
@@ -53,8 +74,6 @@ public abstract class FileUploadReq {
         Map<String, String> params = new LinkedHashMap<>();
         //获取FileUploadReq子类定义的参数
         ReflectUtils.progressData(params, getClass(), FileUploadReq.class);
-        //获取头部参数
-        Map<String, String> headers = addHeaderParams();
         //定义一个多文件、多参数内容的主体
         MultipartBody.Builder builder = new MultipartBody.Builder();
         for (Map.Entry<String, String> entry : params.entrySet()) {
@@ -65,16 +84,14 @@ public abstract class FileUploadReq {
         }
         //遍历添加文件数据
         for (File file : fileList) {
-            builder.addPart(Headers.of("Content-Disposition", "form-data;name=\"" + fileName + "\";filename=\"" + file.getName() + "\""), RequestBody.create(MediaType.parse("application-octet-stream"), file));
+            builder.addPart(Headers.of("Content-Disposition", "form-data;name=\"" + fileName + "\";filename=\"" + file.getName() + "\""), RequestBody.create(MediaType.parse("application/octet-stream"), file));
         }
         //得到一个包装好的主体
         MultipartBody body = builder.setType(MultipartBody.FORM).build();
         Request.Builder build = new Request.Builder();
         //设置头部
-        if (headers != null) {
-            for (Map.Entry<String, String> entry : headers.entrySet()) {
-                build.addHeader(entry.getKey(), entry.getValue());
-            }
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
+            build.addHeader(entry.getKey(), entry.getValue());
         }
         //创建一个请求
         Request request = build.post(body).url(uploadUrl).build();
@@ -93,5 +110,28 @@ public abstract class FileUploadReq {
         });
     }
 
-    protected abstract Map<String, String> addHeaderParams();
+    /**
+     * 添加头部参数
+     *
+     * @param headers 参数集
+     */
+    public void addHeaders(Map<String, String> headers) {
+        if (headers != null) {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                this.headers.put(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
+    /**
+     * 添加单个头部参数
+     *
+     * @param key   键
+     * @param value 值
+     */
+    public void addHeader(String key, String value) {
+        if (!TextUtils.isEmpty(key)) {
+            this.headers.put(key, value);
+        }
+    }
 }
