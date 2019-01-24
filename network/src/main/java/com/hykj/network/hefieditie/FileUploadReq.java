@@ -26,7 +26,7 @@ import okhttp3.Response;
 /**
  * 文件上传封装
  */
-public abstract class FileUploadReq {
+public class FileUploadReq {
     private String uploadUrl;//上传url地址
     private String fileName;//文件传入参数名
     private List<File> fileList = new ArrayList<>();//文件列表
