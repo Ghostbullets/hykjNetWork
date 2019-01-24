@@ -3,6 +3,7 @@ package com.hykj.network.yibook.req;
 
 import com.google.gson.Gson;
 
+import com.hykj.network.utils.ReflectUtils;
 import com.hykj.network.yibook.callback.ObtainCallBack;
 import com.hykj.network.yibook.rec.BaseRec;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -36,7 +37,7 @@ public abstract class AbsReq<T extends BaseRec> {
     public void doRequest(final Object o, final ObtainCallBack callBack) {
         Map<String, String> params = new LinkedHashMap<>();
         //generalDataProcess(params);
-        processData(getClass(), params);
+        ReflectUtils.progressData(params, getClass(), AbsReq.class);
 
         Map<String, String> headers = addHeaders();
         if (headers != null) {
@@ -98,41 +99,6 @@ public abstract class AbsReq<T extends BaseRec> {
                     params.put(key, value);
                 }
             }
-        }
-    }
-
-    /**
-     * 将数据转换为键值对
-     *
-     * @param cls
-     * @param params
-     */
-    private void processData(Class cls, Map<String, String> params) {
-        Gson gson = new Gson();
-        Field[] fields = cls.getDeclaredFields();
-        for (Field field : fields) {
-            try {
-                String key = field.getName();
-                if ("serialVersionUID".equals(key))
-                    continue;
-                field.setAccessible(true);
-                Object obj = field.get(this);
-                if (obj == null)
-                    continue;
-                String value;
-                if (obj instanceof String) {
-                    value = (String) obj;
-                } else {
-                    value = gson.toJson(obj);
-                }
-                params.put(key, value);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-        Class superclass = cls.getSuperclass();
-        if (superclass != null && !superclass.getName().equals(AbsReq.class.getName())) {
-            processData(superclass, params);
         }
     }
 }
