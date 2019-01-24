@@ -1,5 +1,7 @@
 package com.hykj.network.hefieditie;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 
 import com.hykj.network.hefieditie.callback.CallBack;
@@ -31,6 +33,7 @@ public class FileUploadReq {
     private String fileName;//文件传入参数名
     private List<File> fileList = new ArrayList<>();//文件列表
     private Map<String, String> headers = new LinkedHashMap<>();//头部参数
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
     public FileUploadReq(List<String> filePaths, String uploadUrl, String fileName) {
         this.uploadUrl = uploadUrl;
@@ -98,14 +101,25 @@ public class FileUploadReq {
         //异步网络请求
         new OkHttpClient.Builder().build().newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                callBack.onFailure(e.toString());
+            public void onFailure(Call call, final IOException e) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callBack.onFailure(e.toString());
+                    }
+                });
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String json = response.body().string();
-                callBack.onResponse(o, callBack.parseNetworkResponse(json));
+                final Object rec = callBack.parseNetworkResponse(json);
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callBack.onResponse(o, rec);
+                    }
+                });
             }
         });
     }
