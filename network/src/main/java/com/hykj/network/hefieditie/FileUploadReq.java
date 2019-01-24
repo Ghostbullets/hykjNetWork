@@ -76,7 +76,7 @@ public class FileUploadReq {
     public void doRequest(final Object o, final CallBack callBack) {
         Map<String, String> params = new LinkedHashMap<>();
         //获取FileUploadReq子类定义的参数
-        ReflectUtils.progressData(params, getClass(), FileUploadReq.class);
+        ReflectUtils.progressData(params, this, FileUploadReq.class);
         //定义一个多文件、多参数内容的主体
         MultipartBody.Builder builder = new MultipartBody.Builder();
         for (Map.Entry<String, String> entry : params.entrySet()) {

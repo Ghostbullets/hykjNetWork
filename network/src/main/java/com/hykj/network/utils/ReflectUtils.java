@@ -14,11 +14,12 @@ public class ReflectUtils {
      * 通过反射将类中的属性名、属性值以键值对返回
      *
      * @param params    传入的map集合
-     * @param targetCls 目标class
+     * @param target 目标类
      * @param floorCls  底层class，目标class持续的从父类中反射属性键值对，直到它的父类名等于该类名
      * @return
      */
-    public static Map<String, String> progressData(Map<String, String> params, @NonNull Class<?> targetCls, Class<?> floorCls) {
+    public static Map<String, String> progressData(Map<String, String> params, @NonNull Object target, Class<?> floorCls) {
+        Class<?> targetCls=target.getClass();
         if (params == null)
             params = new LinkedHashMap<>();
         if (floorCls == null)
@@ -32,7 +33,7 @@ public class ReflectUtils {
                     if ("serialVersionUID".equals(key))
                         continue;
                     field.setAccessible(true);
-                    Object o = field.get(targetCls);
+                    Object o = field.get(target);
                     if (o == null)
                         continue;
                     String value;

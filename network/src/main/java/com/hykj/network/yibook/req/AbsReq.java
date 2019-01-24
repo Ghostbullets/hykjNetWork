@@ -37,7 +37,7 @@ public abstract class AbsReq<T extends BaseRec> {
     public void doRequest(final Object o, final ObtainCallBack callBack) {
         Map<String, String> params = new LinkedHashMap<>();
         //generalDataProcess(params);
-        ReflectUtils.progressData(params, getClass(), AbsReq.class);
+        ReflectUtils.progressData(params, this, AbsReq.class);
 
         Map<String, String> headers = addHeaders();
         if (headers != null) {
