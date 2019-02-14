@@ -2,9 +2,10 @@ package com.hykj.network.yibook.get;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 
-import com.google.gson.Gson;
 import com.hykj.network.utils.ReflectUtils;
+import com.hykj.network.utils.Utils;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -15,6 +16,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.internal.Util;
 
 /**
  * get请求
@@ -23,6 +25,7 @@ import okhttp3.Response;
  */
 public class AbsGetReq<T extends BaseGetRec> {
     private String httpUrl;
+    private Map<String, String> params = new LinkedHashMap<>();
     public Handler mHandler = new Handler(Looper.getMainLooper());
 
     public AbsGetReq(String httpUrl) {
@@ -34,9 +37,8 @@ public class AbsGetReq<T extends BaseGetRec> {
     }
 
     public void doRequest(final Object o, final ObtainGetCallBack callBack) {
-        Map<String, String> params = new LinkedHashMap<>();
         ReflectUtils.progressData(params, this, AbsGetReq.class);
-        if (!"?".equals(httpUrl.substring(httpUrl.length() - 1)))
+        if (params.size() > 0 && !"?".equals(httpUrl.substring(httpUrl.length() - 1)))
             httpUrl = httpUrl + "?";
         StringBuilder builder = new StringBuilder(httpUrl);
         int i = 1;
@@ -79,5 +81,20 @@ public class AbsGetReq<T extends BaseGetRec> {
                         }
                     }
                 });
+    }
+
+    public void addParams(String key, String value) {
+        Utils.checkNameAndValue(key, value);
+        this.params.put(key, value);
+    }
+
+    public void addParamsSet(Map<String, String> params) {
+        if (params == null) throw new NullPointerException("params == null");
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            Utils.checkNameAndValue(key, value);
+            this.params.put(key, value);
+        }
     }
 }
