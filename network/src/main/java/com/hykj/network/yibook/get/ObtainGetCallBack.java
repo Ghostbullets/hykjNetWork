@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 
 import java.lang.reflect.ParameterizedType;
 
-public abstract class ObtainGetCallBack<T extends BaseGetRec> implements BaseGetCallBack {
+public abstract class ObtainGetCallBack<T extends BaseGetRec> implements BaseGetCallBack<T> {
     private Class<T> cls;
 
     public ObtainGetCallBack() {
@@ -20,7 +20,7 @@ public abstract class ObtainGetCallBack<T extends BaseGetRec> implements BaseGet
     }
 
     @Override
-    public Object parseNetworkResponse(String result) {
+    public T parseNetworkResponse(String result) {
         try {
             return new Gson().fromJson(result, cls);
         } catch (Exception e) {
