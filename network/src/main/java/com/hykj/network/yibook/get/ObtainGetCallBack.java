@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 
 import java.lang.reflect.ParameterizedType;
 
-public abstract class ObtainGetCallBack<T> implements BaseGetCallBack {
+public abstract class ObtainGetCallBack<T extends BaseGetRec> implements BaseGetCallBack {
     private Class<T> cls;
 
     public ObtainGetCallBack() {
@@ -12,6 +12,11 @@ public abstract class ObtainGetCallBack<T> implements BaseGetCallBack {
         if (type != null && type.getActualTypeArguments().length > 0) {
             cls = (Class<T>) type.getActualTypeArguments()[0];
         }
+    }
+
+    @Override
+    public void onFinish() {
+
     }
 
     @Override

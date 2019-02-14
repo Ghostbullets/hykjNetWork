@@ -2,8 +2,8 @@ package com.hykj.network.yibook.get;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.text.TextUtils;
 
+import com.google.gson.Gson;
 import com.hykj.network.utils.ReflectUtils;
 import com.hykj.network.utils.Utils;
 
@@ -16,7 +16,6 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.internal.Util;
 
 /**
  * get请求
@@ -69,13 +68,20 @@ public class AbsGetReq<T extends BaseGetRec> {
                     @Override
                     public void onResponse(Call call, final Response response) throws IOException {
                         try {
-                            final T rec = (T) callBack.parseNetworkResponse(response.body().string());
+                            T rec = null;
+                            String json = response.body().string();
+                            final BaseGetRec errorRec = new Gson().fromJson(json, BaseGetRec.class);
+                            if (errorRec != null && errorRec.getStatus() == 0) {
+                                rec = (T) callBack.parseNetworkResponse(json);
+                            }
+                            final T finalRec = rec;
                             mHandler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    callBack.onResponse(o, rec);
+                                    callBack.onResponse(o, finalRec, errorRec);
                                 }
                             });
+
                         } catch (Exception e) {
 
                         }
