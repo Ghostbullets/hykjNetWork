@@ -2,6 +2,7 @@ package com.hykj.network.yibook.get;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.hykj.network.utils.ReflectUtils;
@@ -41,14 +42,15 @@ public class AbsGetReq<T extends BaseGetRec> {
             httpUrl = httpUrl + "?";
         StringBuilder builder = new StringBuilder(httpUrl);
         int i = 1;
-        for (Map.Entry entry : params.entrySet()) {
-            builder.append(entry.getKey());
-            builder.append("=");
-            builder.append(entry.getValue());
-            if (params.size() > i) {
-                builder.append("&");
-                i++;
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            if (!TextUtils.isEmpty(entry.getValue())) {
+                builder.append(entry.getKey());
+                builder.append("=");
+                builder.append(entry.getValue());
+                if (params.size() > i)
+                    builder.append("&");
             }
+            i++;
         }
         Request request = new Request.Builder().get().url(builder.toString()).build();
         new OkHttpClient.Builder()
