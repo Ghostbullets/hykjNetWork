@@ -74,7 +74,7 @@ public class UploadFileReq {
             public void subscribe(final ObservableEmitter<String> emitter) throws Exception {
                 Map<String, String> params = new LinkedHashMap<>();
                 //获取FileUploadReq子类定义的参数
-                ReflectUtils.progressData(params, this, UploadFileReq.class);
+                ReflectUtils.progressData(params, UploadFileReq.this, UploadFileReq.class);
                 //定义一个多文件、多参数内容的主体
                 MultipartBody.Builder builder = new MultipartBody.Builder();
                 for (Map.Entry<String, String> entry : params.entrySet()) {
