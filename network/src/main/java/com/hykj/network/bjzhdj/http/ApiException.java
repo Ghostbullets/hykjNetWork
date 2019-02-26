@@ -1,4 +1,4 @@
-package com.hykj.network.bjzhdj;
+package com.hykj.network.bjzhdj.http;
 
 import com.google.gson.Gson;
 import com.hykj.network.bjzhdj.rec.BaseRec;

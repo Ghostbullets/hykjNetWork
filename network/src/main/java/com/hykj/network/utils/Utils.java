@@ -1,5 +1,8 @@
 package com.hykj.network.utils;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.text.TextUtils;
 
 import okhttp3.internal.Util;
@@ -29,5 +32,16 @@ public class Utils {
                         "Unexpected char %#04x at %d in %s value: %s", (int) c, i, name, value));
             }
         }
+    }
+
+    /**
+     * 网络是否连接
+     * @param context 上下文
+     * @return
+     */
+    public static boolean isNetWorkConnected(Context context) {
+        ConnectivityManager mgr = (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = mgr.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
     }
 }

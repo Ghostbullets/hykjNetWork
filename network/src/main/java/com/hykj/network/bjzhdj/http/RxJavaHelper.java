@@ -1,7 +1,8 @@
-package com.hykj.network.bjzhdj;
+package com.hykj.network.bjzhdj.http;
 
 import android.support.annotation.Nullable;
 
+import com.hykj.network.bjzhdj.http.ApiException;
 import com.hykj.network.bjzhdj.rec.BaseRec;
 
 import io.reactivex.Observable;
@@ -10,6 +11,8 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
@@ -72,5 +75,32 @@ public class RxJavaHelper {
                 }
             }
         });
+    }
+
+    /**
+     * 添加线程管理并订阅
+     * activity中使用
+     *
+     * @param ob
+     * @param progressSubscribe
+     * @param isShowProgress
+     */
+    public static void toSubscribe(Observable ob, final boolean isShowProgress, final String progress, final ProgressSubscribe progressSubscribe) {
+        ob.compose(handleResult()).doOnSubscribe(new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable disposable) throws Exception {
+                if (isShowProgress) {
+                    progressSubscribe.showProgress(progress);
+                }
+            }
+        }).subscribe(progressSubscribe);
+    }
+
+    public static void toSubscribe(Observable ob, final boolean isShowProgress, final ProgressSubscribe progressSubscribe) {
+        toSubscribe(ob, isShowProgress, null, progressSubscribe);
+    }
+
+    public static void toSubscribe(Observable ob, final ProgressSubscribe progressSubscribe) {
+        toSubscribe(ob, false, null, progressSubscribe);
     }
 }

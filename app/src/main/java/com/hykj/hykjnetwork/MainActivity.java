@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        disposable.add(
+       /* disposable.add(
                 new UploadFileReq("", "", "")
                         .addHeader("", "")
                         .addHeaders(null)
@@ -38,6 +38,6 @@ public class MainActivity extends AppCompatActivity {
                                 Log.e(TAG, throwable.toString());
                             }
                         }));
-        ApiFactory.getInstance().login();
+        ApiFactory.getInstance().login();*/
     }
 }

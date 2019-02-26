@@ -1,6 +1,7 @@
 package com.hykj.network.utils;
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.google.gson.Gson;
 
@@ -49,5 +50,28 @@ public class ReflectUtils {
             targetCls = targetCls.getSuperclass();
         }
         return params;
+    }
+
+    /**
+     * 反射修改对象属性值
+     * @param obj 类对象
+     * @param fieldName 类属性名
+     * @param value 类属性名对应的属性值
+     */
+    public static void setFieldValue(Object obj, String fieldName, Object value) {
+        if (obj == null || TextUtils.isEmpty(fieldName)) return;
+
+        Class<?> clazz = obj.getClass();
+        while (clazz != Object.class) {
+            try {
+                Field field = clazz.getDeclaredField(fieldName);
+                field.setAccessible(true);
+                field.set(fieldName, value);
+                return;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            clazz = clazz.getSuperclass();
+        }
     }
 }
