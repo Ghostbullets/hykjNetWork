@@ -1,6 +1,8 @@
 package com.hykj.network.bjzhdj;
 
 import android.support.annotation.NonNull;
+
+import com.hykj.network.BuildConfig;
 import com.hykj.network.utils.Utils;
 import java.io.IOException;
 import java.util.Iterator;
@@ -35,7 +37,6 @@ public class HttpInterface {
                 @Override
                 public Response intercept(@NonNull Chain chain) throws IOException {
                     Request.Builder builder = chain.request().newBuilder();
-                    Iterator<Map.Entry<String, String>> iterator = headers.entrySet().iterator();
                     for (Map.Entry<String, String> entry : headers.entrySet()) {
                         String key = entry.getKey();
                         String value = entry.getValue();
