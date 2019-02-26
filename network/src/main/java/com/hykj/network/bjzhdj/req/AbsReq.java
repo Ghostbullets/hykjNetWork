@@ -2,7 +2,7 @@ package com.hykj.network.bjzhdj.req;
 
 import android.support.annotation.NonNull;
 
-import com.hykj.network.bjzhdj.HttpInterface;
+import com.hykj.network.bjzhdj.http.HttpInterface;
 import com.hykj.network.bjzhdj.callback.ObtainCallBack;
 import com.hykj.network.utils.ReflectUtils;
 import com.hykj.network.utils.Utils;
@@ -15,11 +15,7 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * 网络请求基类的抽象类

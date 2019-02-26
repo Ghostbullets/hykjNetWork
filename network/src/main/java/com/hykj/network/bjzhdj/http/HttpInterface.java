@@ -1,4 +1,4 @@
-package com.hykj.network.bjzhdj;
+package com.hykj.network.bjzhdj.http;
 
 import android.support.annotation.NonNull;
 

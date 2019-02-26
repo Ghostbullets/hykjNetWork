@@ -38,5 +38,6 @@ public class MainActivity extends AppCompatActivity {
                                 Log.e(TAG, throwable.toString());
                             }
                         }));
+        ApiFactory.getInstance().login();
     }
 }
