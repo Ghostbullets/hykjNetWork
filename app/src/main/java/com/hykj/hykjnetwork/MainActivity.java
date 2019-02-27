@@ -4,6 +4,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.hykj.hykjnetwork.http.ApiFactory;
+import com.hykj.network.bjzhdj.http.ProgressSubscribe;
+import com.hykj.network.bjzhdj.http.RxJavaHelper;
+import com.hykj.network.bjzhdj.rec.ResultData;
 import com.hykj.network.upload.UploadFileReq;
 
 import io.reactivex.Scheduler;
@@ -37,7 +41,23 @@ public class MainActivity extends AppCompatActivity {
                             public void accept(Throwable throwable) throws Exception {
                                 Log.e(TAG, throwable.toString());
                             }
-                        }));
-        ApiFactory.getInstance().login();*/
+                        }));*/
+        if (false) {
+            //单网络请求演示
+            RxJavaHelper.toSubscribe(ApiFactory.getInstance().login(), true, new ProgressSubscribe<String>(MainActivity.this) {
+                @Override
+                protected void onResponse(String s) {
+
+                }
+            });
+            //多网络请求演示
+            RxJavaHelper.zipToSubscribe(ApiFactory.getInstance().login(), ApiFactory.getInstance().login()
+                    , true, new ProgressSubscribe<ResultData<String, String>>(MainActivity.this) {
+                        @Override
+                        protected void onResponse(ResultData<String, String> result) {
+
+                        }
+                    });
+        }
     }
 }

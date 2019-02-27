@@ -1,13 +1,15 @@
-package com.hykj.hykjnetwork;
+package com.hykj.hykjnetwork.http;
 
 import com.hykj.network.bjzhdj.http.ApiFactoryAbs;
 
 /**
  * created by cjf
  * on:2019/2/26 10:19
+ * 网络请求工具类的使用
  */
 public class ApiFactory extends ApiFactoryAbs<Api> {
     private static Api api;
+
     private ApiFactory() {
         super("http://www.baidu.com");
     }

@@ -22,6 +22,7 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * created by cjf
  * on:2019/2/26 14:39
+ * 后续改进可以从复用性方面考虑，比如 BaseRec<T> 是否可以改成 T  ApiException里面的参数是否也可以因此改成T
  */
 public class RxJavaHelper {
 
@@ -122,7 +123,7 @@ public class RxJavaHelper {
     public static <T, H> void zipToSubscribe(Observable ob1, Observable ob2, final boolean isShowProgress, final String progress, final ProgressSubscribe progressSubscribe) {
         Observable.zip(ob1.compose(handleResult()), ob2.compose(handleResult()), new BiFunction<T, H, ResultData<T, H>>() {
             @Override
-            public ResultData<T, H> apply(T t, H h) throws Exception {
+            public ResultData<T, H> apply(T t, H h) throws Exception {//只有所有请求都成功才会走这里，并走到ProgressSubscribe的onResponse方法
                 return new ResultData<>(t, h);
             }
         }).doOnSubscribe(new Consumer<Disposable>() {
@@ -158,7 +159,7 @@ public class RxJavaHelper {
     public static <T, H, Z> void zipToSubscribe(Observable ob1, Observable ob2, Observable ob3, final String progress, final ProgressSubscribe progressSubscribe) {
         Observable.zip(ob1.compose(handleResult()), ob2.compose(handleResult()), ob3.compose(handleResult()), new Function3<T, H, Z, ThreeResultData<T, H, Z>>() {
             @Override
-            public ThreeResultData<T, H, Z> apply(T t, H h, Z z) throws Exception {
+            public ThreeResultData<T, H, Z> apply(T t, H h, Z z) throws Exception {//只有所有请求都成功才会走这里，并走到ProgressSubscribe的onResponse方法
                 return new ThreeResultData<>(t, h, z);
             }
         }).doOnSubscribe(new Consumer<Disposable>() {

@@ -33,6 +33,7 @@ public abstract class ProgressSubscribe<T> implements ProgressBarDialog.Progress
 
     @Override
     public void onComplete() {
+        onFinish();
         mHub.dismiss();
     }
 
@@ -44,6 +45,7 @@ public abstract class ProgressSubscribe<T> implements ProgressBarDialog.Progress
         } else {
             onFailure(e);
         }
+        onFinish();
         mHub.dismiss();
     }
 
@@ -68,9 +70,26 @@ public abstract class ProgressSubscribe<T> implements ProgressBarDialog.Progress
         }
     }
 
+    /**
+     * 网络请求成功
+     *
+     * @param t 成功时返回的参数
+     */
     protected abstract void onResponse(T t);
 
+    /**
+     * 子类可进行网络请求失败处理
+     *
+     * @param e 错误，该类继承于 {@link ApiException}
+     */
     protected void onFailure(Throwable e) {
+
+    }
+
+    /**
+     * 子类可进行网络请求结束处理，注意，无论是请求失败、成功都会进这个方法
+     */
+    protected void onFinish() {
 
     }
 }
