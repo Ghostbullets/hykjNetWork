@@ -2,8 +2,9 @@ package com.hykj.network.bjzhdj.http;
 
 import android.support.annotation.Nullable;
 
-import com.hykj.network.bjzhdj.http.ApiException;
 import com.hykj.network.bjzhdj.rec.BaseRec;
+import com.hykj.network.bjzhdj.rec.ResultData;
+import com.hykj.network.bjzhdj.rec.ThreeResultData;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -12,8 +13,10 @@ import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
+import io.reactivex.functions.Function3;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -81,9 +84,10 @@ public class RxJavaHelper {
      * 添加线程管理并订阅
      * activity中使用
      *
-     * @param ob
-     * @param progressSubscribe
-     * @param isShowProgress
+     * @param ob                被观察者
+     * @param isShowProgress    是否显示弹窗
+     * @param progress          进度条字符串
+     * @param progressSubscribe 观察者
      */
     public static void toSubscribe(Observable ob, final boolean isShowProgress, final String progress, final ProgressSubscribe progressSubscribe) {
         ob.compose(handleResult()).doOnSubscribe(new Consumer<Disposable>() {
@@ -102,5 +106,66 @@ public class RxJavaHelper {
 
     public static void toSubscribe(Observable ob, final ProgressSubscribe progressSubscribe) {
         toSubscribe(ob, false, null, progressSubscribe);
+    }
+
+    /**
+     * 合并两个网络请求，并将他们的数据放到{@link ResultData}类中
+     *
+     * @param ob1               第一个网络请求
+     * @param ob2               第二个网络请求
+     * @param isShowProgress    是否显示弹窗
+     * @param progress          进度条字符串
+     * @param progressSubscribe 观察者
+     * @param <T>
+     * @param <H>
+     */
+    public static <T, H> void zipToSubscribe(Observable ob1, Observable ob2, final boolean isShowProgress, final String progress, final ProgressSubscribe progressSubscribe) {
+        Observable.zip(ob1.compose(handleResult()), ob2.compose(handleResult()), new BiFunction<T, H, ResultData<T, H>>() {
+            @Override
+            public ResultData<T, H> apply(T t, H h) throws Exception {
+                return new ResultData<>(t, h);
+            }
+        }).doOnSubscribe(new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable disposable) throws Exception {
+                if (isShowProgress) {
+                    progressSubscribe.showProgress(progress);
+                }
+            }
+        }).observeOn(AndroidSchedulers.mainThread()).subscribe(progressSubscribe);
+    }
+
+    public static void zipToSubscribe(Observable ob1, Observable ob2, final boolean isShowProgress, final ProgressSubscribe progressSubscribe) {
+        zipToSubscribe(ob1, ob2, isShowProgress, null, progressSubscribe);
+    }
+
+    public static void zipToSubscribe(Observable ob1, Observable ob2, final ProgressSubscribe progressSubscribe) {
+        zipToSubscribe(ob1, ob2, false, null, progressSubscribe);
+    }
+
+    /**
+     * 合并三个网络请求，并将他们的数据放到{@link ThreeResultData}类中
+     *
+     * @param ob1               被观察者1
+     * @param ob2               被观察者2
+     * @param ob3               被观察者3
+     * @param progress          进度条字符串
+     * @param progressSubscribe 观察者
+     * @param <T>
+     * @param <H>
+     * @param <Z>
+     */
+    public static <T, H, Z> void zipToSubscribe(Observable ob1, Observable ob2, Observable ob3, final String progress, final ProgressSubscribe progressSubscribe) {
+        Observable.zip(ob1.compose(handleResult()), ob2.compose(handleResult()), ob3.compose(handleResult()), new Function3<T, H, Z, ThreeResultData<T, H, Z>>() {
+            @Override
+            public ThreeResultData<T, H, Z> apply(T t, H h, Z z) throws Exception {
+                return new ThreeResultData<>(t, h, z);
+            }
+        }).doOnSubscribe(new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable disposable) throws Exception {
+                progressSubscribe.showProgress(progress);
+            }
+        }).observeOn(AndroidSchedulers.mainThread()).subscribe(progressSubscribe);
     }
 }
