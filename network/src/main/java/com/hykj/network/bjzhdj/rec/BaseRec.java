@@ -7,14 +7,20 @@ public class BaseRec<T> {
     /**
      * code : 0
      * msg : 成功
+     * total: 分页数据在数据库中的总数
      */
     private int code;
     private String msg;
+    private Integer total;
     private T data;
     private T rows;
 
     public int getCode() {
         return code;
+    }
+
+    public Integer getTotal() {
+        return total;
     }
 
     public String getMsg() {

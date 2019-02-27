@@ -3,6 +3,7 @@ package com.hykj.network.bjzhdj.http;
 import android.support.annotation.Nullable;
 
 import com.hykj.network.bjzhdj.rec.BaseRec;
+import com.hykj.network.bjzhdj.rec.PageData;
 import com.hykj.network.bjzhdj.rec.ResultData;
 import com.hykj.network.bjzhdj.rec.ThreeResultData;
 
@@ -43,7 +44,11 @@ public class RxJavaHelper {
                             if (result.getData() != null) {
                                 return createData(result.getData());
                             } else {
-                                return createData(result.getRows());
+                                try {
+                                    return (ObservableSource<T>) createData(new PageData<>(result.getRows(), result.getTotal()));
+                                } catch (Exception e) {
+                                    return createData(result.getRows());
+                                }
                             }
                         } else {
                             return Observable.error(new ApiException(result));
