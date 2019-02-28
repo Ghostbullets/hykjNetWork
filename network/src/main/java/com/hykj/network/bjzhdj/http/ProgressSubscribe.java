@@ -7,6 +7,8 @@ import android.widget.Toast;
 import com.hykj.network.dialog.ProgressBarDialog;
 import com.hykj.network.utils.Utils;
 
+import java.lang.ref.WeakReference;
+
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
@@ -17,12 +19,12 @@ import io.reactivex.disposables.Disposable;
  */
 public abstract class ProgressSubscribe<T> implements ProgressBarDialog.ProgressCancelListener, Observer<T> {
     protected static final String TAG = ProgressSubscribe.class.getName();
-    protected FragmentActivity mActivity;
+    protected WeakReference<FragmentActivity> mActivity;
     protected Disposable disposable;
     protected ProgressBarDialog mHub;
 
     public ProgressSubscribe(FragmentActivity activity) {
-        this.mActivity = activity;
+        this.mActivity = new WeakReference<>(activity);
         mHub = new ProgressBarDialog().init(activity);
     }
 
@@ -40,8 +42,8 @@ public abstract class ProgressSubscribe<T> implements ProgressBarDialog.Progress
     @Override
     public void onError(Throwable e) {
         Log.e(TAG, e.getMessage());
-        if (!Utils.isNetWorkConnected(mActivity)) {
-            Toast.makeText(mActivity, "网络不可用", Toast.LENGTH_SHORT).show();
+        if (mActivity.get() != null && !Utils.isNetWorkConnected(mActivity.get())) {
+            Toast.makeText(mActivity.get(), "网络不可用", Toast.LENGTH_SHORT).show();
         } else {
             onFailure(e);
         }
@@ -56,9 +58,7 @@ public abstract class ProgressSubscribe<T> implements ProgressBarDialog.Progress
 
     @Override
     public void onCancelListener() {
-        if (disposable != null && !disposable.isDisposed()) {
-            disposable.dispose();
-        }
+        onFinish();
     }
 
     /**
@@ -90,6 +90,8 @@ public abstract class ProgressSubscribe<T> implements ProgressBarDialog.Progress
      * 子类可进行网络请求结束处理，注意，无论是请求失败、成功都会进这个方法
      */
     protected void onFinish() {
-
+        if (disposable != null && !disposable.isDisposed()) {
+            disposable.dispose();
+        }
     }
 }
