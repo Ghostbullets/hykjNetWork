@@ -32,7 +32,7 @@ public class HttpInterface {
         Retrofit.Builder builder = new Retrofit.Builder();
         builder.baseUrl(baseUrl).addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create());
-        if (headers != null) {
+        if (headers != null && !headers.isEmpty()) {
             OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
                 @Override
                 public Response intercept(@NonNull Chain chain) throws IOException {
