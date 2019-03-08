@@ -79,7 +79,7 @@ public class RxJavaHelper {
                                 return createData(result.getData());
                             } else {
                                 try {
-                                    return (ObservableSource<T>) createData(new PageData<>(result.getRows(), result.getTotal()));
+                                    return (ObservableSource<T>) createData(new PageData<>(result.getRows(), result.getTotal(), result.getRole()));
                                 } catch (Exception e) {
                                     return createData(result.getRows());
                                 }

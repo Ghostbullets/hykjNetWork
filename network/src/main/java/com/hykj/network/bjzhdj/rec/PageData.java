@@ -7,11 +7,18 @@ package com.hykj.network.bjzhdj.rec;
  */
 public class PageData<T> {
     private T list;
-    private Integer total;
+    private Integer total;//列表总数
+    private Integer role;//权限 1有0没有
 
     public PageData(T list, Integer total) {
         this.list = list;
         this.total = total;
+    }
+
+    public PageData(T list, Integer total, Integer role) {
+        this.list = list;
+        this.total = total;
+        this.role = role;
     }
 
     public T getList() {
@@ -20,5 +27,9 @@ public class PageData<T> {
 
     public Integer getTotal() {
         return total;
+    }
+
+    public Integer getRole() {
+        return role;
     }
 }

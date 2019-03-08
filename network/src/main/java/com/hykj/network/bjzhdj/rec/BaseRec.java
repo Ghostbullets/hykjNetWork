@@ -14,6 +14,7 @@ public class BaseRec<T> {
     private Integer total;
     private T data;
     private T rows;
+    private Integer role;
 
     public int getCode() {
         return code;
@@ -33,5 +34,9 @@ public class BaseRec<T> {
 
     public T getRows() {
         return rows;
+    }
+
+    public Integer getRole() {
+        return role;
     }
 }
