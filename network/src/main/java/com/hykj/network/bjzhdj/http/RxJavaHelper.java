@@ -2,6 +2,7 @@ package com.hykj.network.bjzhdj.http;
 
 import android.support.annotation.Nullable;
 
+import com.hykj.network.bjzhdj.port.AbsTransformer;
 import com.hykj.network.bjzhdj.rec.BaseRec;
 import com.hykj.network.bjzhdj.rec.FourResultData;
 import com.hykj.network.bjzhdj.rec.MultiResultData;
