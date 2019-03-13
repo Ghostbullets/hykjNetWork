@@ -26,7 +26,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * 文件上传封装
+ * 文件上传封装，使用okhttp3方式，调用doRequest()发起请求，并在回调中获取url地址
  */
 public class FileUploadReq {
     private String uploadUrl;//上传url地址
@@ -84,9 +84,13 @@ public class FileUploadReq {
             builder.addPart(Headers.of("Content-Disposition", "form-data;name=\"" + entry.getKey() + "\""), RequestBody.create(null, entry.getValue()));
             //上下两句等同，下面这句内部做了封装
             //builder.addFormDataPart(entry.getKey(),entry.getValue());
+            //builder.addPart(MultipartBody.Part.createFormData(entry.getKey(),entry.getValue()));
         }
         //遍历添加文件数据
         for (File file : fileList) {
+            //builder.addPart(MultipartBody.Part.create(RequestBody.create(MediaType.parse("application/octet-stream"),file)));
+            //builder.addPart(MultipartBody.Part.createFormData(fileName,file.getName(),RequestBody.create(MediaType.parse("application-octet-stream"),file)));
+            //builder.addFormDataPart(fileName,file.getName(),RequestBody.create(MediaType.parse("application-octet-stream"),file));
             builder.addPart(Headers.of("Content-Disposition", "form-data;name=\"" + fileName + "\";filename=\"" + file.getName() + "\""), RequestBody.create(MediaType.parse("application/octet-stream"), file));
         }
         //得到一个包装好的主体
