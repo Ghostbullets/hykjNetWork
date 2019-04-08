@@ -8,6 +8,11 @@ import java.lang.reflect.ParameterizedType;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import okhttp3.Headers;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+
 /**
  * 网络请求基类的抽象类
  */
@@ -41,11 +46,33 @@ public abstract class AbsReq<H> {
 
     /**
      * 得到继承AbsReq的类所定义的属性名、属性值map对象参数(注：不包含AbsReq内定义的参数)
+     * 可用于表单请求参数
+     *  @FormUrlEncoded
+     *  @POST("xxx.xxx")
+     *  Observable<BaseRec <String>> login(@FieldMap Map<String, String> map);
      *
      * @return
      */
     public Map<String, String> getParams() {
         return ReflectUtils.progressData(null, this, AbsReq.class);
+    }
+
+    /**
+     * 可用于Content-Type是application/json时网络请求参数使用
+     * 除了在这里加以外，还可以在{@link com.hykj.network.rxjava.http.HttpInterface}里面addHeader("Content-Type", "application/json;charset=utf-8");
+     *  @Headers({"Content-Type:application/json;charset=utf-8"})
+     *  @POST("xxx.xxx")
+     *  Observable<BaseRec < String>> register(@Body RequestBody body);
+     *
+     * @return
+     */
+    public RequestBody getRequestBody() {
+        MultipartBody.Builder builder = new MultipartBody.Builder();
+        Map<String, String> params = getParams();
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            builder.addPart(Headers.of("Content-Disposition", "form-data;name=\"" + entry.getKey() + "\""), RequestBody.create(MediaType.parse("application/json"), entry.getValue()));
+        }
+        return builder.setType(MultipartBody.FORM).build();
     }
 
     /**
