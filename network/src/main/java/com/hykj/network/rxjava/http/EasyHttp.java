@@ -1,7 +1,5 @@
 package com.hykj.network.rxjava.http;
 
-import android.support.annotation.NonNull;
-
 import com.hykj.network.rxjava.port.AbsTransformer;
 import com.hykj.network.rxjava.port.ApplyTransformer;
 import com.hykj.network.rxjava.port.IntervalCallBack;
@@ -9,13 +7,13 @@ import com.hykj.network.rxjava.port.RepeatWhenCallBack;
 import com.hykj.network.rxjava.port.RetryWhenCallBack;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
@@ -78,7 +76,7 @@ public class EasyHttp {
          * @param count        轮询次数
          * @return
          */
-        public Builder interval(long initialDelay, long period, TimeUnit unit, int count, @NonNull final IntervalCallBack callBack) {
+        public Builder interval(long initialDelay, long period, TimeUnit unit, int count, final IntervalCallBack callBack) {
             if (this.observable == null) {
                 return this;
             } else {
@@ -93,7 +91,7 @@ public class EasyHttp {
                     public boolean test(Object o) throws Exception {
                         //如果条件满足，就会终止轮询，这里逻辑可以自己写
                         //结果为true，说明满足条件了，就不在轮询了
-                        return callBack.takeUntil(o);
+                        return callBack != null && callBack.takeUntil(o);
                     }
                 });
                 return this;
@@ -113,7 +111,26 @@ public class EasyHttp {
             this.observable = this.observable.repeatWhen(new Function<Observable<Object>, ObservableSource<?>>() {
                 @Override
                 public ObservableSource<?> apply(Observable<Object> objectObservable) throws Exception {
-                    return objectObservable.zipWith(Observable.range(1, count), new BiFunction<Object, Integer, Integer>() {
+                    final AtomicInteger counter = new AtomicInteger();
+                    return objectObservable.takeWhile(new Predicate<Object>() {
+                        @Override
+                        public boolean test(Object o) throws Exception {
+                            return counter.getAndIncrement() != count - 1;//不-1的话，会请求1次以后，再重复请求pollingSize次，会多出来一次
+                        }
+                    }).flatMap(new Function<Object, ObservableSource<?>>() {
+                        @Override
+                        public ObservableSource<?> apply(Object o) throws Exception {
+                            long delay = 5 * 1000;
+                            if (callBack != null) {
+                                delay = Math.max(0, callBack.disposeTimer(counter.get()));
+                            }
+                            if (counter.get() == count)//请求完轮询次数，则不延迟发送Observable走onComplete()方法
+                                delay = 0;
+                            return Observable.timer(delay, TimeUnit.MILLISECONDS);
+                        }
+                    });
+                    //rxjava2.1.8以后建议不要使用Observable.range(1, count)https://github.com/ReactiveX/RxJava/issues/5772
+                 /*   return objectObservable.zipWith(Observable.range(1, count), new BiFunction<Object, Integer, Integer>() {
                         @Override
                         public Integer apply(Object o, Integer index) throws Exception {
                             return index;
@@ -129,7 +146,7 @@ public class EasyHttp {
                                 delay = 0;
                             return Observable.timer(delay, TimeUnit.MILLISECONDS);
                         }
-                    });
+                    });*/
                 }
             });
             return this;
@@ -148,7 +165,29 @@ public class EasyHttp {
             this.observable = this.observable.retryWhen(new Function<Observable<Throwable>, ObservableSource<?>>() {
                 @Override
                 public ObservableSource<?> apply(Observable<Throwable> errors) throws Exception {
-                    return errors.zipWith(Observable.range(1, count), new BiFunction<Throwable, Integer, ErrorData>() {
+                    final AtomicInteger counter = new AtomicInteger();
+                    return errors.takeWhile(new Predicate<Throwable>() {
+                        @Override
+                        public boolean test(Throwable throwable) throws Exception {
+                            if (callBack != null && callBack.disposeThrowable(throwable)) {//返回true直接终止轮询，false继续轮询直到次数到上限
+                                return true;
+                            }
+                            //返回true结束轮询
+                            return counter.getAndIncrement() != count - 1;//得到counter的值，跟count-1比较，然后将counter里面的值+1
+                        }
+                    }).flatMap(new Function<Throwable, ObservableSource<?>>() {
+                        @Override
+                        public ObservableSource<?> apply(Throwable throwable) throws Exception {
+                            long delay = 5 * 1000;
+                            if (callBack != null) {
+                                delay = Math.max(0, callBack.disposeTimer(counter.get()));
+                            }
+                            if (counter.get() == count)//请求完轮询次数，则不延迟发送Observable走onComplete()方法
+                                delay = 0;
+                            return Observable.timer(delay, TimeUnit.MILLISECONDS);
+                        }
+                    });
+                  /*  return errors.zipWith(Observable.range(1, count), new BiFunction<Throwable, Integer, ErrorData>() {
                         @Override
                         public ErrorData apply(Throwable throwable, Integer index) throws Exception {
                             if (callBack != null && callBack.disposeThrowable(throwable)) {//返回true直接终止轮询，false继续轮询直到次数到上限
@@ -170,7 +209,7 @@ public class EasyHttp {
                                 delay = 0;
                             return Observable.timer(delay, TimeUnit.MILLISECONDS);
                         }
-                    });
+                    });*/
                 }
             });
             return this;
@@ -207,7 +246,7 @@ public class EasyHttp {
         }
     }
 
-    public static class ErrorData {
+  /*  public static class ErrorData {
         private Throwable t;//错误对象
         private int index;//错误在轮询中的位置
 
@@ -223,5 +262,5 @@ public class EasyHttp {
         public int getIndex() {
             return index;
         }
-    }
+    }*/
 }
