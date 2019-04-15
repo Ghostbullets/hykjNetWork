@@ -5,7 +5,7 @@ import com.hykj.network.rxjava.port.ApplyTransformer;
 import com.hykj.network.rxjava.port.IntervalCallBack;
 import com.hykj.network.rxjava.port.RepeatWhenCallBack;
 import com.hykj.network.rxjava.port.RetryWhenCallBack;
-import com.hykj.network.rxjava.port.RxImplView;
+import com.hykj.network.rxjava.port.RxView;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -47,9 +47,9 @@ public class EasyHttp {
         progress = builder.progress;
     }
 
-    public void toSubscribe(RxImplView mView, final ProgressSubscribe progressSubscribe) {
-        if (mView != null && mView.bindToUntilEvent() != null) {
-            mObservable = mObservable.compose(mView.bindToUntilEvent());
+    public void toSubscribe(RxView mView, Object event, final ProgressSubscribe progressSubscribe) {
+        if (mView != null && mView.bindToUntilEvent(event) != null) {
+            mObservable = mObservable.compose(mView.bindToUntilEvent(event));
         }
         mObservable.doOnSubscribe(new Consumer<Disposable>() {
             @Override

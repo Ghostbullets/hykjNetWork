@@ -2,11 +2,13 @@ package com.hykj.network.rxjava.http;
 
 import android.support.annotation.Nullable;
 
-import com.hykj.network.rxjava.port.RxImplView;
+import com.hykj.network.rxjava.port.RxView;
 import com.hykj.network.rxjava.rec.FourResultData;
 import com.hykj.network.rxjava.rec.MultiResultData;
 import com.hykj.network.rxjava.rec.ResultData;
 import com.hykj.network.rxjava.rec.ThreeResultData;
+import com.trello.rxlifecycle2.android.ActivityEvent;
+import com.trello.rxlifecycle2.android.FragmentEvent;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -67,11 +69,13 @@ public abstract class AbsRxJavaHelper<H, T> {
      * @param ob                被观察者
      * @param isShowProgress    是否显示弹窗
      * @param progress          进度条字符串
+     * @param mView             接口
+     * @param event             在Activity页面调用时请传入{@link ActivityEvent}，在Fragment碎片调用时请传入{@link FragmentEvent}
      * @param progressSubscribe 观察者
      */
-    public void toSubscribe(Observable ob, final boolean isShowProgress, final String progress, RxImplView mView, final ProgressSubscribe progressSubscribe) {
-        if (mView != null && mView.bindToUntilEvent() != null) {
-            ob = ob.compose(mView.bindToUntilEvent());
+    public void toSubscribe(Observable ob, final boolean isShowProgress, final String progress, RxView mView, Object event, final ProgressSubscribe progressSubscribe) {
+        if (mView != null && mView.bindToUntilEvent(event) != null) {
+            ob = ob.compose(mView.bindToUntilEvent(event));
         }
         ob.compose(handleResult()).doOnSubscribe(new Consumer<Disposable>() {
             @Override
@@ -83,12 +87,12 @@ public abstract class AbsRxJavaHelper<H, T> {
         }).subscribe(progressSubscribe);
     }
 
-    public void toSubscribe(Observable ob, final boolean isShowProgress, RxImplView mView, final ProgressSubscribe progressSubscribe) {
-        toSubscribe(ob, isShowProgress, null, mView, progressSubscribe);
+    public void toSubscribe(Observable ob, final boolean isShowProgress, RxView mView, Object event, final ProgressSubscribe progressSubscribe) {
+        toSubscribe(ob, isShowProgress, null, mView, event, progressSubscribe);
     }
 
-    public void toSubscribe(Observable ob, RxImplView mView, final ProgressSubscribe progressSubscribe) {
-        toSubscribe(ob, false, mView, progressSubscribe);
+    public void toSubscribe(Observable ob, RxView mView, Object event, final ProgressSubscribe progressSubscribe) {
+        toSubscribe(ob, false, mView, event, progressSubscribe);
     }
 
     /**
@@ -98,19 +102,21 @@ public abstract class AbsRxJavaHelper<H, T> {
      * @param ob2               第二个网络请求
      * @param isShowProgress    是否显示弹窗
      * @param progress          进度条字符串
+     * @param mView             接口
+     * @param event             在Activity页面调用时请传入{@link ActivityEvent}，在Fragment碎片调用时请传入{@link FragmentEvent}
      * @param progressSubscribe 观察者
      * @param <T>
      * @param <H>
      */
-    public <T, H> void zipToSubscribe(Observable ob1, Observable ob2, final boolean isShowProgress, final String progress, RxImplView mView, final ProgressSubscribe progressSubscribe) {
+    public <T, H> void zipToSubscribe(Observable ob1, Observable ob2, final boolean isShowProgress, final String progress, RxView mView, Object event, final ProgressSubscribe progressSubscribe) {
         Observable zip = Observable.zip(ob1.compose(handleResult()), ob2.compose(handleResult()), new BiFunction<T, H, ResultData<T, H>>() {
             @Override
             public ResultData<T, H> apply(T t, H h) throws Exception {//只有所有请求都成功才会走这里，并走到ProgressSubscribe的onResponse方法
                 return new ResultData<>(t, h);
             }
         });
-        if (mView != null && mView.bindToUntilEvent() != null) {
-            zip = zip.compose(mView.bindToUntilEvent());
+        if (mView != null && mView.bindToUntilEvent(event) != null) {
+            zip = zip.compose(mView.bindToUntilEvent(event));
         }
         zip.doOnSubscribe(new Consumer<Disposable>() {
             @Override
@@ -122,12 +128,12 @@ public abstract class AbsRxJavaHelper<H, T> {
         }).observeOn(AndroidSchedulers.mainThread()).subscribe(progressSubscribe);
     }
 
-    public void zipToSubscribe(Observable ob1, Observable ob2, final boolean isShowProgress, RxImplView mView, final ProgressSubscribe progressSubscribe) {
-        zipToSubscribe(ob1, ob2, isShowProgress, null, mView, progressSubscribe);
+    public void zipToSubscribe(Observable ob1, Observable ob2, final boolean isShowProgress, RxView mView, Object event, final ProgressSubscribe progressSubscribe) {
+        zipToSubscribe(ob1, ob2, isShowProgress, null, mView, event, progressSubscribe);
     }
 
-    public void zipToSubscribe(Observable ob1, Observable ob2, RxImplView mView, final ProgressSubscribe progressSubscribe) {
-        zipToSubscribe(ob1, ob2, false, mView, progressSubscribe);
+    public void zipToSubscribe(Observable ob1, Observable ob2, RxView mView, Object event, final ProgressSubscribe progressSubscribe) {
+        zipToSubscribe(ob1, ob2, false, mView, event, progressSubscribe);
     }
 
     /**
@@ -138,20 +144,22 @@ public abstract class AbsRxJavaHelper<H, T> {
      * @param ob3               被观察者3
      * @param isShowProgress    是否显示弹窗
      * @param progress          进度条字符串
+     * @param mView             接口
+     * @param event             在Activity页面调用时请传入{@link ActivityEvent}，在Fragment碎片调用时请传入{@link FragmentEvent}
      * @param progressSubscribe 观察者
      * @param <T>
      * @param <H>
      * @param <Z>
      */
-    public <T, H, Z> void zipToSubscribe(Observable ob1, Observable ob2, Observable ob3, final boolean isShowProgress, final String progress, RxImplView mView, final ProgressSubscribe progressSubscribe) {
+    public <T, H, Z> void zipToSubscribe(Observable ob1, Observable ob2, Observable ob3, final boolean isShowProgress, final String progress, RxView mView, Object event, final ProgressSubscribe progressSubscribe) {
         Observable zip = Observable.zip(ob1.compose(handleResult()), ob2.compose(handleResult()), ob3.compose(handleResult()), new Function3<T, H, Z, ThreeResultData<T, H, Z>>() {
             @Override
             public ThreeResultData<T, H, Z> apply(T t, H h, Z z) throws Exception {//只有所有请求都成功才会走这里，并走到ProgressSubscribe的onResponse方法
                 return new ThreeResultData<>(t, h, z);
             }
         });
-        if (mView != null && mView.bindToUntilEvent() != null) {
-            zip = zip.compose(mView.bindToUntilEvent());
+        if (mView != null && mView.bindToUntilEvent(event) != null) {
+            zip = zip.compose(mView.bindToUntilEvent(event));
         }
         zip.doOnSubscribe(new Consumer<Disposable>() {
             @Override
@@ -163,8 +171,8 @@ public abstract class AbsRxJavaHelper<H, T> {
         }).observeOn(AndroidSchedulers.mainThread()).subscribe(progressSubscribe);
     }
 
-    public void zipToSubscribe(Observable ob1, Observable ob2, Observable ob3, RxImplView mView, final ProgressSubscribe progressSubscribe) {
-        zipToSubscribe(ob1, ob2, ob3, false, null, mView, progressSubscribe);
+    public void zipToSubscribe(Observable ob1, Observable ob2, Observable ob3, RxView mView, Object event, final ProgressSubscribe progressSubscribe) {
+        zipToSubscribe(ob1, ob2, ob3, false, null, mView, event, progressSubscribe);
     }
 
     /**
@@ -176,21 +184,23 @@ public abstract class AbsRxJavaHelper<H, T> {
      * @param ob4               被观察者4
      * @param isShowProgress    是否显示弹窗
      * @param progress          进度条字符串
+     * @param mView             接口
+     * @param event             在Activity页面调用时请传入{@link ActivityEvent}，在Fragment碎片调用时请传入{@link FragmentEvent}
      * @param progressSubscribe 观察者
      * @param <T>
      * @param <H>
      * @param <Z>
      * @param <X>
      */
-    public <T, H, Z, X> void zipToSubscribe(Observable ob1, Observable ob2, Observable ob3, Observable ob4, final boolean isShowProgress, final String progress, RxImplView mView, final ProgressSubscribe progressSubscribe) {
+    public <T, H, Z, X> void zipToSubscribe(Observable ob1, Observable ob2, Observable ob3, Observable ob4, final boolean isShowProgress, final String progress, RxView mView, Object event, final ProgressSubscribe progressSubscribe) {
         Observable zip = Observable.zip(ob1.compose(handleResult()), ob2.compose(handleResult()), ob3.compose(handleResult()), ob4.compose(handleResult()), new Function4<T, H, Z, X, FourResultData<T, H, Z, X>>() {
             @Override
             public FourResultData<T, H, Z, X> apply(T t, H h, Z z, X x) throws Exception {
                 return new FourResultData<>(t, h, z, x);
             }
         });
-        if (mView != null && mView.bindToUntilEvent() != null) {
-            zip = zip.compose(mView.bindToUntilEvent());
+        if (mView != null && mView.bindToUntilEvent(event) != null) {
+            zip = zip.compose(mView.bindToUntilEvent(event));
         }
         zip.doOnSubscribe(new Consumer<Disposable>() {
             @Override
@@ -202,8 +212,8 @@ public abstract class AbsRxJavaHelper<H, T> {
         }).observeOn(AndroidSchedulers.mainThread()).subscribe(progressSubscribe);
     }
 
-    public void zipToSubscribe(Observable ob1, Observable ob2, Observable ob3, Observable ob4, RxImplView mView, final ProgressSubscribe progressSubscribe) {
-        zipToSubscribe(ob1, ob2, ob3, ob4, false, null, mView, progressSubscribe);
+    public void zipToSubscribe(Observable ob1, Observable ob2, Observable ob3, Observable ob4, RxView mView, Object event, final ProgressSubscribe progressSubscribe) {
+        zipToSubscribe(ob1, ob2, ob3, ob4, false, null, mView, event, progressSubscribe);
     }
 
     /**
@@ -211,10 +221,12 @@ public abstract class AbsRxJavaHelper<H, T> {
      *
      * @param isShowProgress    是否显示弹窗
      * @param progress          进度条字符串
+     * @param mView             接口
+     * @param event             在Activity页面调用时请传入{@link ActivityEvent}，在Fragment碎片调用时请传入{@link FragmentEvent}
      * @param progressSubscribe 观察者
      * @param observables       被观察者数组
      */
-    public void multiToSubscribe(final boolean isShowProgress, final String progress, RxImplView mView, final ProgressSubscribe progressSubscribe, Observable... observables) {
+    public void multiToSubscribe(final boolean isShowProgress, final String progress, RxView mView, Object event, final ProgressSubscribe progressSubscribe, Observable... observables) {
         if (observables == null || observables.length < 5)
             throw new RuntimeException("多网络的请求个数小于5个，请使用其他方法");
         Observable zip;
@@ -254,8 +266,8 @@ public abstract class AbsRxJavaHelper<H, T> {
                 }
             });
         }
-        if (mView != null && mView.bindToUntilEvent() != null) {
-            zip = zip.compose(mView.bindToUntilEvent());
+        if (mView != null && mView.bindToUntilEvent(event) != null) {
+            zip = zip.compose(mView.bindToUntilEvent(event));
         }
         zip.doOnSubscribe(new Consumer<Disposable>() {
             @Override
@@ -266,7 +278,7 @@ public abstract class AbsRxJavaHelper<H, T> {
         }).observeOn(AndroidSchedulers.mainThread()).subscribe(progressSubscribe);
     }
 
-    public void multiToSubscribe(final ProgressSubscribe progressSubscribe, RxImplView mView, Observable... observables) {
-        multiToSubscribe(false, null, mView, progressSubscribe, observables);
+    public void multiToSubscribe(final ProgressSubscribe progressSubscribe, RxView mView, Object event, Observable... observables) {
+        multiToSubscribe(false, null, mView, event, progressSubscribe, observables);
     }
 }
