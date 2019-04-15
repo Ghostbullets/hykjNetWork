@@ -16,5 +16,5 @@ public interface RxView {
      * @param obj 在Activity页面调用时请传入{@link ActivityEvent}，在Fragment碎片调用时请传入{@link FragmentEvent}
      * @return
      */
-    <T> LifecycleTransformer<T> bindUntilEvent(Object obj);
+    <T> LifecycleTransformer<T> bindToUntilEvent(Object obj);
 }

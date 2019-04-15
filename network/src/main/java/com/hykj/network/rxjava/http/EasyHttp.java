@@ -48,8 +48,8 @@ public class EasyHttp {
     }
 
     public void toSubscribe(RxImplView mView, final ProgressSubscribe progressSubscribe) {
-        if (mView != null && mView.bindUntilEvent() != null) {
-            mObservable = mObservable.compose(mView.bindUntilEvent());
+        if (mView != null && mView.bindToUntilEvent() != null) {
+            mObservable = mObservable.compose(mView.bindToUntilEvent());
         }
         mObservable.doOnSubscribe(new Consumer<Disposable>() {
             @Override

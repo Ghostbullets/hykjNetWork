@@ -70,8 +70,8 @@ public abstract class AbsRxJavaHelper<H, T> {
      * @param progressSubscribe 观察者
      */
     public void toSubscribe(Observable ob, final boolean isShowProgress, final String progress, RxImplView mView, final ProgressSubscribe progressSubscribe) {
-        if (mView != null && mView.bindUntilEvent() != null) {
-            ob = ob.compose(mView.bindUntilEvent());
+        if (mView != null && mView.bindToUntilEvent() != null) {
+            ob = ob.compose(mView.bindToUntilEvent());
         }
         ob.compose(handleResult()).doOnSubscribe(new Consumer<Disposable>() {
             @Override
@@ -109,8 +109,8 @@ public abstract class AbsRxJavaHelper<H, T> {
                 return new ResultData<>(t, h);
             }
         });
-        if (mView != null && mView.bindUntilEvent() != null) {
-            zip = zip.compose(mView.bindUntilEvent());
+        if (mView != null && mView.bindToUntilEvent() != null) {
+            zip = zip.compose(mView.bindToUntilEvent());
         }
         zip.doOnSubscribe(new Consumer<Disposable>() {
             @Override
@@ -150,8 +150,8 @@ public abstract class AbsRxJavaHelper<H, T> {
                 return new ThreeResultData<>(t, h, z);
             }
         });
-        if (mView != null && mView.bindUntilEvent() != null) {
-            zip = zip.compose(mView.bindUntilEvent());
+        if (mView != null && mView.bindToUntilEvent() != null) {
+            zip = zip.compose(mView.bindToUntilEvent());
         }
         zip.doOnSubscribe(new Consumer<Disposable>() {
             @Override
@@ -189,8 +189,8 @@ public abstract class AbsRxJavaHelper<H, T> {
                 return new FourResultData<>(t, h, z, x);
             }
         });
-        if (mView != null && mView.bindUntilEvent() != null) {
-            zip = zip.compose(mView.bindUntilEvent());
+        if (mView != null && mView.bindToUntilEvent() != null) {
+            zip = zip.compose(mView.bindToUntilEvent());
         }
         zip.doOnSubscribe(new Consumer<Disposable>() {
             @Override
@@ -254,8 +254,8 @@ public abstract class AbsRxJavaHelper<H, T> {
                 }
             });
         }
-        if (mView != null && mView.bindUntilEvent() != null) {
-            zip = zip.compose(mView.bindUntilEvent());
+        if (mView != null && mView.bindToUntilEvent() != null) {
+            zip = zip.compose(mView.bindToUntilEvent());
         }
         zip.doOnSubscribe(new Consumer<Disposable>() {
             @Override

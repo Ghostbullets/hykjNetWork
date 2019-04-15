@@ -18,7 +18,7 @@ public class RxImplView {
         this.obj = obj;
     }
 
-    public <T> LifecycleTransformer<T> bindUntilEvent() {
-        return rxView.bindUntilEvent(obj);
+    public <T> LifecycleTransformer<T> bindToUntilEvent() {
+        return rxView.bindToUntilEvent(obj);
     }
 }
