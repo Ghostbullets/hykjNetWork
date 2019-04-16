@@ -18,9 +18,9 @@ import java.util.List;
  * 带分页功能的数据接收
  */
 public abstract class PageProgressSubscribe<T> extends ProgressSubscribe<T> {
-    private List<PageInfo> pageInfos = new LinkedList<>();//用于分页结束数据
+    protected List<PageInfo> pageInfos = new LinkedList<>();//用于分页结束数据
     //pageInfos个数为1，并且返回数据是ThreeResultData、ResultData、FourResultData、MultiResultData，并且其中含有多个PageData对象时，选择哪一个PageData设置是否有下一页
-    private int singlePage = 0;
+    protected int singlePage = 0;
 
     public PageProgressSubscribe(FragmentActivity activity) {
         super(activity);
@@ -89,6 +89,14 @@ public abstract class PageProgressSubscribe<T> extends ProgressSubscribe<T> {
         super.onFinish();
         for (PageInfo pageInfo : pageInfos) {//设置加载结束
             pageInfo.setLoading(false);
+        }
+    }
+
+    @Override
+    public void preLoad() {
+        super.preLoad();
+        for (PageInfo pageInfo : pageInfos) {//设置加载开始
+            pageInfo.setLoading(true);
         }
     }
 }
