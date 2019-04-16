@@ -68,7 +68,6 @@ public abstract class ProgressSubscribe<T> implements ProgressBarDialog.Progress
         if (mHub != null) {
             mHub.showProgress(message);
         }
-        preLoad();
     }
 
     /**
@@ -90,7 +89,7 @@ public abstract class ProgressSubscribe<T> implements ProgressBarDialog.Progress
     /**
      * 显示进度条的同时想做什么
      */
-    protected void preLoad() {
+    public void preLoad() {
 
     }
 

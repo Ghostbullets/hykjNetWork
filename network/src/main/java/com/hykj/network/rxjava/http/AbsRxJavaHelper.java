@@ -83,6 +83,7 @@ public abstract class AbsRxJavaHelper<H, T> {
                 if (isShowProgress) {
                     progressSubscribe.showProgress(progress);
                 }
+                progressSubscribe.preLoad();
             }
         }).subscribe(progressSubscribe);
     }
@@ -124,6 +125,7 @@ public abstract class AbsRxJavaHelper<H, T> {
                 if (isShowProgress) {
                     progressSubscribe.showProgress(progress);
                 }
+                progressSubscribe.preLoad();
             }
         }).observeOn(AndroidSchedulers.mainThread()).subscribe(progressSubscribe);
     }
@@ -167,6 +169,7 @@ public abstract class AbsRxJavaHelper<H, T> {
                 if (isShowProgress) {
                     progressSubscribe.showProgress(progress);
                 }
+                progressSubscribe.preLoad();
             }
         }).observeOn(AndroidSchedulers.mainThread()).subscribe(progressSubscribe);
     }
@@ -208,6 +211,7 @@ public abstract class AbsRxJavaHelper<H, T> {
                 if (isShowProgress) {
                     progressSubscribe.showProgress(progress);
                 }
+                progressSubscribe.preLoad();
             }
         }).observeOn(AndroidSchedulers.mainThread()).subscribe(progressSubscribe);
     }
@@ -272,8 +276,10 @@ public abstract class AbsRxJavaHelper<H, T> {
         zip.doOnSubscribe(new Consumer<Disposable>() {
             @Override
             public void accept(Disposable disposable) throws Exception {
-                if (isShowProgress)
+                if (isShowProgress) {
                     progressSubscribe.showProgress(progress);
+                }
+                progressSubscribe.preLoad();
             }
         }).observeOn(AndroidSchedulers.mainThread()).subscribe(progressSubscribe);
     }

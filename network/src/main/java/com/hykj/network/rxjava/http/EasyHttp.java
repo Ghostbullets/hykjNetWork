@@ -54,8 +54,10 @@ public class EasyHttp {
         mObservable.doOnSubscribe(new Consumer<Disposable>() {
             @Override
             public void accept(Disposable disposable) throws Exception {
-                if (showProgress)
+                if (showProgress){
                     progressSubscribe.showProgress(progress);
+                }
+                progressSubscribe.preLoad();
             }
         }).subscribe(progressSubscribe);
     }
