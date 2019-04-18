@@ -98,7 +98,7 @@ public class ProgressBarDialog extends DialogFragment {
         this.message = message;
         FragmentManager manager = mActivity.getSupportFragmentManager();
         if (!isAdded()) {
-            if (manager.findFragmentByTag(getClass().getSimpleName()) == null) {
+            if (manager.findFragmentByTag(TAG) == null || manager.findFragmentByTag(TAG) != this) {
                 ReflectUtils.setFieldValue(this, "mDismissed", false);
                 ReflectUtils.setFieldValue(this, "mShownByMe", true);
                 ReflectUtils.setFieldValue(this, "mViewDestroyed", false);
