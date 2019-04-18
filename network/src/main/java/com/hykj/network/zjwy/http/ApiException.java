@@ -1,6 +1,8 @@
 package com.hykj.network.zjwy.http;
 
 
+import android.text.TextUtils;
+
 import com.hykj.network.zjwy.rec.BaseRec;
 
 /**
@@ -12,6 +14,7 @@ public class ApiException extends RuntimeException {
     private BaseRec errorRec;
 
     public ApiException(BaseRec errorRec) {
+        super(errorRec != null&& !TextUtils.isEmpty(errorRec.getMessage()) ? errorRec.getMessage() : "服务端错误");
         this.errorRec = errorRec;
     }
 
