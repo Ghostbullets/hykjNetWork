@@ -14,8 +14,9 @@ public interface RepeatWhenCallBack {
    /* boolean disposeThrowable(int index);*/
 
     /**
-     * @param index 当前网络请求异常在轮询中的位置
+     * @param number 当前网络请求异常是第几次轮询
+     * @param count 轮询次数
      * @return 延迟多少毫秒重试网络请求
      */
-    long disposeTimer(int index);
+    long disposeTimer(int number,int count);
 }

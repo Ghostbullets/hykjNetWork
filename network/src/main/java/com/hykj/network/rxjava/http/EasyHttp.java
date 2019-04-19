@@ -67,6 +67,7 @@ public class EasyHttp {
         private AbsTransformer transformer;
         private boolean showProgress;
         private String progress;
+        private int number=0;
 
         public Builder(Observable observable, AbsTransformer transformer) {
             this.transformer = transformer;
@@ -79,13 +80,15 @@ public class EasyHttp {
          * @param initialDelay 初始化延时多久开始请求
          * @param period       间隔多久轮询一次
          * @param unit         时间单位
-         * @param count        轮询次数
+         * @param pollingSize        轮询次数
          * @return
          */
-        public Builder interval(long initialDelay, long period, TimeUnit unit, int count, final IntervalCallBack callBack) {
+        public Builder interval(long initialDelay, long period, TimeUnit unit, int pollingSize, final IntervalCallBack callBack) {
+            final int count = Math.max(1, pollingSize);
             if (this.observable == null) {
                 return this;
             } else {
+                number=0;
                 final Observable temp = this.observable;
                 this.observable = Observable.interval(initialDelay, period, unit).take(Math.max(1, count)).flatMap(new Function<Long, ObservableSource<?>>() {
                     @Override
@@ -97,7 +100,8 @@ public class EasyHttp {
                     public boolean test(Object o) throws Exception {
                         //如果条件满足，就会终止轮询，这里逻辑可以自己写
                         //结果为true，说明满足条件了，就不在轮询了
-                        return callBack != null && callBack.takeUntil(o);
+                        number++;
+                        return callBack != null && callBack.takeUntil(o,number,count);
                     }
                 });
                 return this;
@@ -112,8 +116,7 @@ public class EasyHttp {
          * @return
          */
         public Builder repeatWhen(int pollingSize, final RepeatWhenCallBack callBack) {
-            pollingSize = Math.max(1, pollingSize);
-            final int count = pollingSize;
+            final int count = Math.max(1, pollingSize);
             this.observable = this.observable.repeatWhen(new Function<Observable<Object>, ObservableSource<?>>() {
                 @Override
                 public ObservableSource<?> apply(Observable<Object> objectObservable) throws Exception {
@@ -128,7 +131,7 @@ public class EasyHttp {
                         public ObservableSource<?> apply(Object o) throws Exception {
                             long delay = 5 * 1000;
                             if (callBack != null) {
-                                delay = Math.max(0, callBack.disposeTimer(counter.get()));
+                                delay = Math.max(0, callBack.disposeTimer(counter.get(),count));
                             }
                             if (counter.get() == count)//请求完轮询次数，则不延迟发送Observable走onComplete()方法
                                 delay = 0;
@@ -166,8 +169,7 @@ public class EasyHttp {
          * @return
          */
         public Builder retryWhen(int pollingSize, final RetryWhenCallBack callBack) {
-            pollingSize = Math.max(1, pollingSize);
-            final int count = pollingSize;
+            final int count = Math.max(1, pollingSize);
             this.observable = this.observable.retryWhen(new Function<Observable<Throwable>, ObservableSource<?>>() {
                 @Override
                 public ObservableSource<?> apply(Observable<Throwable> errors) throws Exception {
@@ -175,18 +177,19 @@ public class EasyHttp {
                     return errors.takeWhile(new Predicate<Throwable>() {
                         @Override
                         public boolean test(Throwable throwable) throws Exception {
-                            if (callBack != null && callBack.disposeThrowable(throwable)) {//返回true直接终止轮询，false继续轮询直到次数到上限
+                           boolean isLast= counter.getAndIncrement() != count - 1;//得到counter的值，跟count-1比较，然后将counter里面的值+1
+                            if (callBack != null && callBack.disposeThrowable(throwable,counter.get(),count)) {//返回true直接终止轮询，false继续轮询直到次数到上限
                                 return true;
                             }
                             //返回true结束轮询
-                            return counter.getAndIncrement() != count - 1;//得到counter的值，跟count-1比较，然后将counter里面的值+1
+                            return isLast;
                         }
                     }).flatMap(new Function<Throwable, ObservableSource<?>>() {
                         @Override
                         public ObservableSource<?> apply(Throwable throwable) throws Exception {
                             long delay = 5 * 1000;
                             if (callBack != null) {
-                                delay = Math.max(0, callBack.disposeTimer(counter.get()));
+                                delay = Math.max(0, callBack.disposeTimer(counter.get(),count));
                             }
                             if (counter.get() == count)//请求完轮询次数，则不延迟发送Observable走onComplete()方法
                                 delay = 0;
