@@ -71,6 +71,7 @@ public abstract class AbsReq {
 
                 }
                 callBack.onResponse(o, rec, errorRec);
+                callBack.onFinish();
             }
         });
     }
