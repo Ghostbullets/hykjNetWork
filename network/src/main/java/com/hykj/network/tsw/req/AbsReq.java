@@ -24,15 +24,21 @@ public abstract class AbsReq {
         this.httpUrl = url;
     }
 
-    public void doRequest(final ObtainCallBack callBack) {
-        doRequest(null, callBack);
+    public void doRequest(boolean showProgress, ObtainCallBack callBack) {
+        doRequest(showProgress, null, callBack);
     }
 
     /**
-     * @param o        tag
-     * @param callBack 回调
+     * @param showProgress 是否显示弹窗
+     * @param progress     弹窗字符串
+     * @param callBack     回调
      */
-    public void doRequest(final Object o, final ObtainCallBack callBack) {
+    public void doRequest(boolean showProgress, String progress, final ObtainCallBack callBack) {
+        if (showProgress) {
+            callBack.showProgress(progress);
+        }
+        callBack.preLoad();
+
         Map<String, String> params = new LinkedHashMap<>();
         ReflectUtils.progressData(params, this, AbsReq.class);
 
@@ -70,7 +76,7 @@ public abstract class AbsReq {
                 } catch (Exception e) {
 
                 }
-                callBack.onResponse(o, rec, errorRec);
+                callBack.onResponse(rec, errorRec);
                 callBack.onFinish();
             }
         });
