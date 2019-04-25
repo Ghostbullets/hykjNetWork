@@ -33,9 +33,13 @@ public abstract class ObtainCallBack<T extends BaseRec> implements BaseCallBack<
     }
 
     private void init() {
-        ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
-        if (type != null && type.getActualTypeArguments().length > 0) {
-            t = (Class<T>) type.getActualTypeArguments()[0];
+        try {
+            ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
+            if (type != null && type.getActualTypeArguments().length > 0) {
+                t = (Class<T>) type.getActualTypeArguments()[0];
+            }
+        } catch (ClassCastException e) {
+            t = (Class<T>) BaseRec.class;
         }
     }
 

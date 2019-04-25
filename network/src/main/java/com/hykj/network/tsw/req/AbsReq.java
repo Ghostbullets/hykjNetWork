@@ -24,6 +24,10 @@ public abstract class AbsReq {
         this.httpUrl = url;
     }
 
+    public void doRequest(ObtainCallBack callBack) {
+        doRequest(true, null, callBack);
+    }
+
     public void doRequest(boolean showProgress, ObtainCallBack callBack) {
         doRequest(showProgress, null, callBack);
     }
