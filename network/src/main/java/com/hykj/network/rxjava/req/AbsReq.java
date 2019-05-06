@@ -84,10 +84,7 @@ public abstract class AbsReq<H> {
      * @return
      */
     public RequestBody getJSONBody() {
-        MultipartBody.Builder builder = new MultipartBody.Builder();
-        String json = new Gson().toJson(getParams());
-        builder.addPart(RequestBody.create(MediaType.parse("application/json"), json));
-        return builder.setType(MultipartBody.FORM).build();
+        return RequestBody.create(MediaType.parse("application/json"), new Gson().toJson(getParams()));
     }
 
     /**
