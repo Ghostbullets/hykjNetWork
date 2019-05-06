@@ -1,5 +1,6 @@
 package com.hykj.network.rxjava.req;
 
+import com.google.gson.Gson;
 import com.hykj.network.bjzhdj.http.HttpInterface;
 import com.hykj.network.utils.ReflectUtils;
 import com.hykj.network.utils.Utils;
@@ -72,6 +73,20 @@ public abstract class AbsReq<H> {
         for (Map.Entry<String, String> entry : params.entrySet()) {
             builder.addPart(Headers.of("Content-Disposition", "form-data;name=\"" + entry.getKey() + "\""), RequestBody.create(MediaType.parse("application/json"), entry.getValue()));
         }
+        return builder.setType(MultipartBody.FORM).build();
+    }
+
+    /**
+     * 用于 http请求 post(json格式)时使用，普通的http的编码格式也就是mid=10&method=userInfo&dateInt=20160818
+     * json编码格式的，也就是编码成{"mid":"10","method":"userInfo","dateInt":"20160818"}
+     * @POST("xxx.xxx")
+     * Observable<BaseRec < String>> register(@Body RequestBody body);
+     * @return
+     */
+    public RequestBody getJSONBody() {
+        MultipartBody.Builder builder = new MultipartBody.Builder();
+        String json = new Gson().toJson(getParams());
+        builder.addPart(RequestBody.create(MediaType.parse("application/json"), json));
         return builder.setType(MultipartBody.FORM).build();
     }
 
