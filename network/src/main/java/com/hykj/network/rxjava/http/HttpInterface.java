@@ -104,6 +104,8 @@ public class HttpInterface {
                 try {
                     if (data != null) {
                         emitter.onNext(data);
+                    } else {
+                        emitter.onNext((T) new Object());
                     }
                     emitter.onComplete();
                 } catch (Exception e) {
