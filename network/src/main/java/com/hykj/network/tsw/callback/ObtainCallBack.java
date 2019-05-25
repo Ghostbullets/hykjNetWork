@@ -10,9 +10,10 @@ import com.hykj.network.tsw.rec.BaseRec;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 public abstract class ObtainCallBack<T extends BaseRec> implements BaseCallBack<T> {
-    protected Class<T> t;
+    protected Type t;
     protected WeakReference<FragmentActivity> mWeakAct;
     protected PageInfo pageInfo;
     protected ProgressBarDialog mHub;
@@ -36,10 +37,10 @@ public abstract class ObtainCallBack<T extends BaseRec> implements BaseCallBack<
         try {
             ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
             if (type != null && type.getActualTypeArguments().length > 0) {
-                t = (Class<T>) type.getActualTypeArguments()[0];
+                t = type.getActualTypeArguments()[0];
             }
         } catch (ClassCastException e) {
-            t = (Class<T>) BaseRec.class;
+            t = BaseRec.class;
         }
     }
 
