@@ -18,29 +18,37 @@ public abstract class ObtainCallBack<T extends BaseRec> implements BaseCallBack<
     protected PageInfo pageInfo;
     protected ProgressBarDialog mHub;
 
+    public ObtainCallBack(FragmentActivity activity, PageInfo pageInfo, Type t) {
+        init(activity, pageInfo, t);
+    }
+
     public ObtainCallBack(FragmentActivity activity, PageInfo pageInfo) {
-        this.mWeakAct = new WeakReference<>(activity);
-        if (activity != null)
-            mHub = new ProgressBarDialog().init(activity);
-        this.pageInfo = pageInfo;
-        init();
+        init(activity, pageInfo, null);
+    }
+
+    public ObtainCallBack(FragmentActivity activity, Type t) {
+        init(activity, null, t);
     }
 
     public ObtainCallBack(FragmentActivity activity) {
-        this.mWeakAct = new WeakReference<>(activity);
-        if (activity != null)
-            mHub = new ProgressBarDialog().init(activity);
-        init();
+        init(activity, null, null);
     }
 
-    private void init() {
-        try {
-            ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
-            if (type != null && type.getActualTypeArguments().length > 0) {
-                t = type.getActualTypeArguments()[0];
+    private void init(FragmentActivity activity, PageInfo pageInfo, Type t) {
+        this.mWeakAct = new WeakReference<>(activity);
+        this.pageInfo = pageInfo;
+        this.t = t;
+        if (activity != null)
+            mHub = new ProgressBarDialog().init(activity);
+        if (this.t == null) {
+            try {
+                ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
+                if (type != null && type.getActualTypeArguments().length > 0) {
+                    this.t = type.getActualTypeArguments()[0];
+                }
+            } catch (ClassCastException e) {
+                this.t = BaseRec.class;
             }
-        } catch (ClassCastException e) {
-            t = BaseRec.class;
         }
     }
 

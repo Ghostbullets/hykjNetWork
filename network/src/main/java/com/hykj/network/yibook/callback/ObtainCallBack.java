@@ -5,14 +5,19 @@ import com.google.gson.Gson;
 import com.hykj.network.yibook.rec.BaseRec;
 
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 public abstract class ObtainCallBack<T extends BaseRec> implements BaseCallBack<T> {
-    private Class<T> t;
+    private Type t;
 
     public ObtainCallBack() {
-        ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
-        if (type != null && type.getActualTypeArguments().length > 0) {
-            t = (Class<T>) type.getActualTypeArguments()[0];
+        try {
+            ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
+            if (type != null && type.getActualTypeArguments().length > 0) {
+                this.t = type.getActualTypeArguments()[0];
+            }
+        } catch (ClassCastException e) {
+            this.t = BaseRec.class;
         }
     }
 
