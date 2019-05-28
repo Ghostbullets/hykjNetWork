@@ -10,6 +10,11 @@ import com.hykj.network.rxjava.rec.ThreeResultData;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 import com.trello.rxlifecycle2.android.FragmentEvent;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -31,6 +36,18 @@ import io.reactivex.functions.Function9;
  * on:2019/2/26 14:39
  */
 public abstract class AbsRxJavaHelper<H, T> {
+    private Type t;
+
+    public AbsRxJavaHelper() {
+        try {
+            ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
+            if (type != null && type.getActualTypeArguments().length > 0) {
+                t = type.getActualTypeArguments()[0];
+            }
+        } catch (ClassCastException e) {
+            t = Object.class;
+        }
+    }
 
     /**
      * 将上游的H 转换成T，并再次发送，具体转换由继承AbsRxJavaHelper的类来处理(比如：BaseRec<T>转换成T)
@@ -54,7 +71,11 @@ public abstract class AbsRxJavaHelper<H, T> {
                     if (data != null) {
                         emitter.onNext(data);
                     } else {
-                        emitter.onNext((T) new Object());
+                        if (t.toString().contains(List.class.getName())) {
+                            emitter.onNext((T) new ArrayList<>());
+                        } else {
+                            emitter.onNext((T) new Object());
+                        }
                     }
                     emitter.onComplete();
                 } catch (Exception e) {
