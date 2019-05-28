@@ -8,6 +8,10 @@ import com.hykj.network.dialog.ProgressBarDialog;
 import com.hykj.network.utils.Utils;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -22,10 +26,19 @@ public abstract class ProgressSubscribe<T> implements ProgressBarDialog.Progress
     protected WeakReference<FragmentActivity> mActivity;
     protected Disposable disposable;
     protected ProgressBarDialog mHub;
+    private Type genericityType;
 
     public ProgressSubscribe(FragmentActivity activity) {
         this.mActivity = new WeakReference<>(activity);
         mHub = new ProgressBarDialog().init(activity);
+        try {
+            ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
+            if (type != null && type.getActualTypeArguments().length > 0) {
+                genericityType = type.getActualTypeArguments()[0];
+            }
+        } catch (ClassCastException e) {
+            genericityType = Object.class;
+        }
     }
 
     @Override
@@ -53,7 +66,12 @@ public abstract class ProgressSubscribe<T> implements ProgressBarDialog.Progress
 
     @Override
     public void onNext(T t) {
-        onResponse(t);
+        //如果传过来的数据类型不是列表，并且你希望返回列表数据，则返回空数组
+        if (genericityType.toString().contains(List.class.getName()) && !(t instanceof List)) {
+            onResponse((T) new ArrayList<>());
+        } else {
+            onResponse(t);
+        }
     }
 
     @Override
