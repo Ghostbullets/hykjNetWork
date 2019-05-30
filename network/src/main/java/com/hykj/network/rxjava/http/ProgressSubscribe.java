@@ -1,6 +1,7 @@
 package com.hykj.network.rxjava.http;
 
 import android.support.v4.app.FragmentActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -67,7 +68,11 @@ public abstract class ProgressSubscribe<T> implements ProgressBarDialog.Progress
     @Override
     public void onNext(T t) {
         //如果传过来的数据类型不是列表，并且你希望返回列表数据，则返回空数组
-        if (genericityType.toString().contains(List.class.getName()) && !(t instanceof List)) {
+        String name = genericityType.toString();
+        if (!TextUtils.isEmpty(name) && name.contains("<") && name.contains(">")) {
+            name = name.substring(0, name.indexOf("<"));
+        }
+        if (name.contains(List.class.getName()) && !(t instanceof List)) {
             onResponse((T) new ArrayList<>());
         } else {
             onResponse(t);
