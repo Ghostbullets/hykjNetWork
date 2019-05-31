@@ -1,7 +1,8 @@
 package com.hykj.network.rxjava.req;
 
 import com.google.gson.Gson;
-import com.hykj.network.bjzhdj.http.HttpInterface;
+
+import com.hykj.network.rxjava.http.HttpInterface;
 import com.hykj.network.utils.ReflectUtils;
 import com.hykj.network.utils.Utils;
 
@@ -12,6 +13,7 @@ import java.util.Map;
 import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 
 /**
@@ -42,7 +44,16 @@ public abstract class AbsReq<H> {
      * @return
      */
     public H init() {
-        return HttpInterface.deRequest(headers, baseUrl).create(service);
+        return HttpInterface.deRequest(headers, baseUrl,null).create(service);
+    }
+
+    /**
+     * 初始化，得到对应的网络请求的接口
+     *
+     * @return
+     */
+    public H init(OkHttpClient.Builder builder) {
+        return HttpInterface.deRequest(headers, baseUrl,builder).create(service);
     }
 
     /**

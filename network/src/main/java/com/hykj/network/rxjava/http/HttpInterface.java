@@ -37,12 +37,14 @@ public class HttpInterface {
      * @param baseUrl 网络请求的完整 Url =该baseUrl加上在网络请求接口的注解设置
      * @return
      */
-    public static Retrofit deRequest(final Map<String, String> headers, @NonNull String baseUrl) {
+    public static Retrofit deRequest(final Map<String, String> headers, @NonNull String baseUrl, OkHttpClient.Builder clientBuilder) {
         Retrofit.Builder builder = new Retrofit.Builder();
         builder.baseUrl(baseUrl).addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create());
         if (headers != null && !headers.isEmpty()) {
-            OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
+            if (clientBuilder == null)
+                clientBuilder = new OkHttpClient.Builder();
+            clientBuilder.addInterceptor(new Interceptor() {
                 @Override
                 public Response intercept(@NonNull Chain chain) throws IOException {
                     Request.Builder builder = chain.request().newBuilder();
@@ -54,8 +56,10 @@ public class HttpInterface {
                     }
                     return chain.proceed(builder.build());
                 }
-            }).build();
-            builder.client(client);
+            });
+        }
+        if (clientBuilder != null) {
+            builder.client(clientBuilder.build());
         }
         return builder.build();
     }

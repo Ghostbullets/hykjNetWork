@@ -6,6 +6,8 @@ import java.lang.reflect.ParameterizedType;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import okhttp3.OkHttpClient;
+
 /**
  * created by cjf
  * on:2019/2/26 10:06
@@ -63,6 +65,15 @@ public class ApiFactoryAbs<H> {
      * @return
      */
     public H init() {
-        return HttpInterface.deRequest(headers, baseUrl).create(service);
+        return HttpInterface.deRequest(headers, baseUrl,null).create(service);
+    }
+
+    /**
+     * 初始化，得到对应的网络请求的接口
+     *
+     * @return
+     */
+    public H init(OkHttpClient.Builder builder) {
+        return HttpInterface.deRequest(headers, baseUrl,builder).create(service);
     }
 }

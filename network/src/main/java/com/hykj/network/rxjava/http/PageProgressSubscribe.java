@@ -3,7 +3,6 @@ package com.hykj.network.rxjava.http;
 import android.support.v4.app.FragmentActivity;
 
 import com.hykj.network.rxjava.bean.PageInfo;
-import com.hykj.network.rxjava.http.ProgressSubscribe;
 import com.hykj.network.zjwy.rec.PageData;
 
 import java.lang.reflect.Field;
