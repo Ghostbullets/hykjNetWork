@@ -1,5 +1,6 @@
 package com.hykj.network.rxjava.http;
 
+import com.hykj.network.dialog.ProgressBarDialog;
 import com.hykj.network.rxjava.port.AbsTransformer;
 import com.hykj.network.rxjava.port.ApplyTransformer;
 import com.hykj.network.rxjava.port.IntervalCallBack;
@@ -40,11 +41,16 @@ public class EasyHttp {
     private Observable mObservable;
     private boolean showProgress;
     private String progress;
+    private @ProgressBarDialog.BackgroundType
+    Integer backgroundType;
+    private Object backgroundResource;
 
     private EasyHttp(Builder builder) {
         mObservable = builder.observable;
         showProgress = builder.showProgress;
         progress = builder.progress;
+        backgroundType=builder.backgroundType;
+        backgroundResource=builder.backgroundResource;
     }
 
     public void toSubscribe(RxView mView, Object event, final ProgressSubscribe progressSubscribe) {
@@ -54,8 +60,8 @@ public class EasyHttp {
         mObservable.doOnSubscribe(new Consumer<Disposable>() {
             @Override
             public void accept(Disposable disposable) throws Exception {
-                if (showProgress){
-                    progressSubscribe.showProgress(progress);
+                if (showProgress) {
+                    progressSubscribe.showProgress(progress,backgroundType,backgroundResource);
                 }
                 progressSubscribe.preLoad();
             }
@@ -67,7 +73,10 @@ public class EasyHttp {
         private AbsTransformer transformer;
         private boolean showProgress;
         private String progress;
-        private int number=0;
+        private @ProgressBarDialog.BackgroundType
+        Integer backgroundType;
+        private Object backgroundResource;
+        private int number = 0;
 
         public Builder(Observable observable, AbsTransformer transformer) {
             this.transformer = transformer;
@@ -80,7 +89,7 @@ public class EasyHttp {
          * @param initialDelay 初始化延时多久开始请求
          * @param period       间隔多久轮询一次
          * @param unit         时间单位
-         * @param pollingSize        轮询次数
+         * @param pollingSize  轮询次数
          * @return
          */
         public Builder interval(long initialDelay, long period, TimeUnit unit, int pollingSize, final IntervalCallBack callBack) {
@@ -88,7 +97,7 @@ public class EasyHttp {
             if (this.observable == null) {
                 return this;
             } else {
-                number=0;
+                number = 0;
                 final Observable temp = this.observable;
                 this.observable = Observable.interval(initialDelay, period, unit).take(Math.max(1, count)).flatMap(new Function<Long, ObservableSource<?>>() {
                     @Override
@@ -101,7 +110,7 @@ public class EasyHttp {
                         //如果条件满足，就会终止轮询，这里逻辑可以自己写
                         //结果为true，说明满足条件了，就不在轮询了
                         number++;
-                        return callBack != null && callBack.takeUntil(o,number,count);
+                        return callBack != null && callBack.takeUntil(o, number, count);
                     }
                 });
                 return this;
@@ -131,7 +140,7 @@ public class EasyHttp {
                         public ObservableSource<?> apply(Object o) throws Exception {
                             long delay = 5 * 1000;
                             if (callBack != null) {
-                                delay = Math.max(0, callBack.disposeTimer(counter.get(),count));
+                                delay = Math.max(0, callBack.disposeTimer(counter.get(), count));
                             }
                             if (counter.get() == count)//请求完轮询次数，则不延迟发送Observable走onComplete()方法
                                 delay = 0;
@@ -177,8 +186,8 @@ public class EasyHttp {
                     return errors.takeWhile(new Predicate<Throwable>() {
                         @Override
                         public boolean test(Throwable throwable) throws Exception {
-                           boolean isLast= counter.getAndIncrement() != count - 1;//得到counter的值，跟count-1比较，然后将counter里面的值+1
-                            if (callBack != null && callBack.disposeThrowable(throwable,counter.get(),count)) {//返回true直接终止轮询，false继续轮询直到次数到上限
+                            boolean isLast = counter.getAndIncrement() != count - 1;//得到counter的值，跟count-1比较，然后将counter里面的值+1
+                            if (callBack != null && callBack.disposeThrowable(throwable, counter.get(), count)) {//返回true直接终止轮询，false继续轮询直到次数到上限
                                 return true;
                             }
                             //返回true结束轮询
@@ -189,7 +198,7 @@ public class EasyHttp {
                         public ObservableSource<?> apply(Throwable throwable) throws Exception {
                             long delay = 5 * 1000;
                             if (callBack != null) {
-                                delay = Math.max(0, callBack.disposeTimer(counter.get(),count));
+                                delay = Math.max(0, callBack.disposeTimer(counter.get(), count));
                             }
                             if (counter.get() == count)//请求完轮询次数，则不延迟发送Observable走onComplete()方法
                                 delay = 0;
@@ -247,6 +256,12 @@ public class EasyHttp {
 
         public Builder progress(String val) {
             this.progress = val;
+            return this;
+        }
+
+        public Builder background(@ProgressBarDialog.BackgroundType Integer backgroundType, Object backgroundResource) {
+            this.backgroundType = backgroundType;
+            this.backgroundResource=backgroundResource;
             return this;
         }
 

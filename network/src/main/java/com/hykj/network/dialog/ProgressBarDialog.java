@@ -3,7 +3,9 @@ package com.hykj.network.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -22,6 +24,9 @@ import android.widget.TextView;
 import com.hykj.network.R;
 import com.hykj.network.utils.ReflectUtils;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 /**
  * 进度条DialogFragment
  */
@@ -31,6 +36,8 @@ public class ProgressBarDialog extends DialogFragment {
     private String message;
     private boolean isCancel = false;
     private ProgressCancelListener progressCancelListener;
+    private Integer backgroundType;
+    private Object backgroundResource;
 
     public ProgressBarDialog init(FragmentActivity activity) {
         this.mActivity = activity;
@@ -88,6 +95,22 @@ public class ProgressBarDialog extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_progress_bar_circle, container, false);
+        if (backgroundType != null) {
+            switch (backgroundType) {
+                case BackgroundType.colorInt:
+                    if (backgroundResource instanceof Integer)
+                        view.setBackgroundColor((Integer) backgroundResource);
+                    break;
+                case BackgroundType.resId:
+                    if (backgroundResource instanceof Integer)
+                        view.setBackgroundResource((Integer) backgroundResource);
+                    break;
+                case BackgroundType.drawable:
+                    if (backgroundResource instanceof Drawable)
+                        view.setBackground((Drawable) backgroundResource);
+                    break;
+            }
+        }
         if (message != null)
             ((TextView) view.findViewById(R.id.tv_msg)).setText(message);
         view.findViewById(R.id.tv_msg).setVisibility(TextUtils.isEmpty(message) ? View.GONE : View.VISIBLE);
@@ -100,8 +123,20 @@ public class ProgressBarDialog extends DialogFragment {
      * @param message
      */
     public void showProgress(String message) {
+        showProgress(message, null, null);
+    }
+
+    /**
+     * 显示弹窗
+     * @param message 弹窗信息
+     * @param backgroundType 背景类型
+     * @param backgroundResource 背景资源
+     */
+    public void showProgress(String message, @BackgroundType Integer backgroundType, Object backgroundResource) {
         if (mActivity != null) {
             this.message = message;
+            this.backgroundType = backgroundType;
+            this.backgroundResource = backgroundResource;
             FragmentManager manager = mActivity.getSupportFragmentManager();
             if (!isAdded()) {
                 if (manager.findFragmentByTag(TAG) == null || manager.findFragmentByTag(TAG) != this) {
@@ -134,5 +169,13 @@ public class ProgressBarDialog extends DialogFragment {
          * 则你应该使用setOnCancelListener()注册一个DialogInterface.OnCancelListener.
          */
         void onCancelListener();
+    }
+
+    @Retention(RetentionPolicy.CLASS)
+    @IntDef({BackgroundType.resId, BackgroundType.colorInt, BackgroundType.drawable})
+    public @interface BackgroundType {//背景类型
+        int colorInt = 0;
+        int resId = 1;
+        int drawable = 2;
     }
 }
