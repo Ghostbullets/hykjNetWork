@@ -133,7 +133,7 @@ public class EasyHttp {
                     return objectObservable.takeUntil(new Predicate<Object>() {
                         @Override
                         public boolean test(Object o) throws Exception {
-                            return counter.getAndIncrement() != count - 1;//不-1的话，会请求1次以后，再重复请求pollingSize次，会多出来一次
+                            return counter.getAndIncrement() == count - 1;//不-1的话，会请求1次以后，再重复请求pollingSize次，会多出来一次
                         }
                     }).flatMap(new Function<Object, ObservableSource<?>>() {
                         @Override
@@ -186,7 +186,7 @@ public class EasyHttp {
                     return errors.takeUntil(new Predicate<Throwable>() {
                         @Override
                         public boolean test(Throwable throwable) throws Exception {
-                            boolean isLast = counter.getAndIncrement() != count - 1;//得到counter的值，跟count-1比较，然后将counter里面的值+1
+                            boolean isLast = counter.getAndIncrement() == count - 1;//得到counter的值，跟count-1比较，然后将counter里面的值+1
                             if (callBack != null && callBack.disposeThrowable(throwable, counter.get(), count)) {//返回true直接终止轮询，false继续轮询直到次数到上限
                                 return true;
                             }
