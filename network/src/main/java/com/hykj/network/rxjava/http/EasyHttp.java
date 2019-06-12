@@ -130,7 +130,7 @@ public class EasyHttp {
                 @Override
                 public ObservableSource<?> apply(Observable<Object> objectObservable) throws Exception {
                     final AtomicInteger counter = new AtomicInteger();
-                    return objectObservable.takeWhile(new Predicate<Object>() {
+                    return objectObservable.takeUntil(new Predicate<Object>() {
                         @Override
                         public boolean test(Object o) throws Exception {
                             return counter.getAndIncrement() != count - 1;//不-1的话，会请求1次以后，再重复请求pollingSize次，会多出来一次
@@ -183,7 +183,7 @@ public class EasyHttp {
                 @Override
                 public ObservableSource<?> apply(Observable<Throwable> errors) throws Exception {
                     final AtomicInteger counter = new AtomicInteger();
-                    return errors.takeWhile(new Predicate<Throwable>() {
+                    return errors.takeUntil(new Predicate<Throwable>() {
                         @Override
                         public boolean test(Throwable throwable) throws Exception {
                             boolean isLast = counter.getAndIncrement() != count - 1;//得到counter的值，跟count-1比较，然后将counter里面的值+1
