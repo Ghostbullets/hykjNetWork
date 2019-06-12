@@ -60,9 +60,14 @@ public class ProgressBarDialog extends DialogFragment {
     public void onStart() {
         super.onStart();
         Window window = getDialog().getWindow();
-        int size = size2px(mActivity, TypedValue.COMPLEX_UNIT_DIP, 100);
-        window.setLayout(size, size);
-        window.setGravity(Gravity.CENTER);
+        if (window != null) {
+            int size = 200;
+            if (mActivity != null) {
+                size = size2px(mActivity, TypedValue.COMPLEX_UNIT_DIP, 100);
+            }
+            window.setLayout(size, size);
+            window.setGravity(Gravity.CENTER);
+        }
         getDialog().setCancelable(isCancel);
         getDialog().setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
@@ -95,16 +100,18 @@ public class ProgressBarDialog extends DialogFragment {
      * @param message
      */
     public void showProgress(String message) {
-        this.message = message;
-        FragmentManager manager = mActivity.getSupportFragmentManager();
-        if (!isAdded()) {
-            if (manager.findFragmentByTag(TAG) == null || manager.findFragmentByTag(TAG) != this) {
-                ReflectUtils.setFieldValue(this, "mDismissed", false);
-                ReflectUtils.setFieldValue(this, "mShownByMe", true);
-                ReflectUtils.setFieldValue(this, "mViewDestroyed", false);
-                FragmentTransaction ft = manager.beginTransaction();
-                ft.add(this, TAG);
-                ft.commitAllowingStateLoss();
+        if (mActivity != null) {
+            this.message = message;
+            FragmentManager manager = mActivity.getSupportFragmentManager();
+            if (!isAdded()) {
+                if (manager.findFragmentByTag(TAG) == null || manager.findFragmentByTag(TAG) != this) {
+                    ReflectUtils.setFieldValue(this, "mDismissed", false);
+                    ReflectUtils.setFieldValue(this, "mShownByMe", true);
+                    ReflectUtils.setFieldValue(this, "mViewDestroyed", false);
+                    FragmentTransaction ft = manager.beginTransaction();
+                    ft.add(this, TAG);
+                    ft.commitAllowingStateLoss();
+                }
             }
         }
     }
