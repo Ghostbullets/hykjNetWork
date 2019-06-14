@@ -26,15 +26,25 @@ public abstract class AbsReq<T extends BaseRec> {
         this.httpUrl = url;
     }
 
-    public void doRequest(final ObtainCallBack callBack) {
-        doRequest(null, callBack);
+    public void doRequest(ObtainCallBack callBack) {
+        doRequest(false, null, callBack);
+    }
+
+    public void doRequest(boolean showProgress, ObtainCallBack callBack) {
+        doRequest(showProgress, null, callBack);
     }
 
     /**
-     * @param o        tag
-     * @param callBack 回调
+     * @param showProgress 是否显示弹窗
+     * @param progress     弹窗字符串
+     * @param callBack     回调
      */
-    public void doRequest(final Object o, final ObtainCallBack callBack) {
+    public void doRequest(boolean showProgress, String progress, final ObtainCallBack callBack) {
+        if (showProgress) {
+            callBack.showProgress(progress);
+        }
+        callBack.preLoad();
+
         Map<String, String> params = new LinkedHashMap<>();
         //generalDataProcess(params);
         ReflectUtils.progressData(params, this, AbsReq.class);
@@ -62,7 +72,7 @@ public abstract class AbsReq<T extends BaseRec> {
             @Override
             public void onResponse(String response, int id) {
                 T rec = (T) callBack.parseNetworkResponse(response);
-                callBack.onResponse(o, rec);
+                callBack.onResponse(null, rec);
                 callBack.onFinish();
             }
         });
