@@ -8,21 +8,20 @@ import com.hykj.network.dialog.ProgressBarDialog;
 import com.hykj.network.rxjava.bean.PageInfo;
 import com.hykj.network.xxgj.rec.BaseRec;
 
-import java.lang.ref.WeakReference;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 public abstract class ObtainCallBack<T extends BaseRec> implements BaseCallBack<T> {
     private Type t;
-    protected PageInfo pageInfo;
+    protected PageInfo mPage;
     protected ProgressBarDialog mHub;
 
-    public ObtainCallBack(FragmentActivity activity, PageInfo pageInfo, Type t) {
-        init(activity, pageInfo, t);
+    public ObtainCallBack(FragmentActivity activity, PageInfo page, Type t) {
+        init(activity, page, t);
     }
 
-    public ObtainCallBack(FragmentActivity activity, PageInfo pageInfo) {
-        init(activity, pageInfo, null);
+    public ObtainCallBack(FragmentActivity activity, PageInfo page) {
+        init(activity, page, null);
     }
 
     public ObtainCallBack(FragmentActivity activity, Type t) {
@@ -42,7 +41,7 @@ public abstract class ObtainCallBack<T extends BaseRec> implements BaseCallBack<
     }
 
     private void init(FragmentActivity activity, PageInfo pageInfo, Type t) {
-        this.pageInfo = pageInfo;
+        this.mPage = pageInfo;
         this.t = t;
         if (activity != null)
             mHub = new ProgressBarDialog().init(activity);
@@ -71,8 +70,8 @@ public abstract class ObtainCallBack<T extends BaseRec> implements BaseCallBack<
      * 显示进度条的同时想做什么
      */
     public void preLoad() {
-        if (pageInfo != null)
-            pageInfo.setLoading(true);
+        if (mPage != null)
+            mPage.setLoading(true);
     }
 
     @Override
@@ -80,8 +79,8 @@ public abstract class ObtainCallBack<T extends BaseRec> implements BaseCallBack<
         if (mHub != null) {
             mHub.dismiss();
         }
-        if (pageInfo != null)
-            pageInfo.setLoading(false);
+        if (mPage != null)
+            mPage.setLoading(false);
     }
 
     @Override
