@@ -14,7 +14,7 @@ import java.lang.reflect.Type;
 public abstract class ObtainCallBack<T extends BaseRec> implements BaseCallBack<T> {
     private Type t;
     protected PageInfo mPage;
-    protected ProgressBarDialog mHub;
+    protected ProgressBarDialog mProgressDialog;
 
     public ObtainCallBack(FragmentActivity activity, PageInfo page, Type t) {
         init(activity, page, t);
@@ -44,7 +44,7 @@ public abstract class ObtainCallBack<T extends BaseRec> implements BaseCallBack<
         this.mPage = pageInfo;
         this.t = t;
         if (activity != null)
-            mHub = new ProgressBarDialog().init(activity);
+            mProgressDialog = new ProgressBarDialog().init(activity);
         if (this.t == null) {
             try {
                 ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
@@ -61,8 +61,8 @@ public abstract class ObtainCallBack<T extends BaseRec> implements BaseCallBack<
      * 显示进度条
      */
     public void showProgress(String message) {
-        if (mHub != null) {
-            mHub.showProgress(message);
+        if (mProgressDialog != null) {
+            mProgressDialog.showProgress(message);
         }
     }
 
@@ -76,8 +76,8 @@ public abstract class ObtainCallBack<T extends BaseRec> implements BaseCallBack<
 
     @Override
     public void onFinish() {
-        if (mHub != null) {
-            mHub.dismiss();
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
         }
         if (mPage != null)
             mPage.setLoading(false);
