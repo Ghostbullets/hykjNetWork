@@ -1,4 +1,4 @@
-package com.hykj.network.dialog;
+package com.hykj.hykjnetwork.http;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -25,19 +25,19 @@ import com.hykj.network.utils.ReflectUtils;
 /**
  * 进度条DialogFragment
  */
-public class ProgressBarDialog extends DialogFragment {
-    private static final String TAG = ProgressBarDialog.class.getSimpleName();
+public class MyProgressBarDialog extends DialogFragment {
+    private static final String TAG = MyProgressBarDialog.class.getSimpleName();
     FragmentActivity mActivity;
     private String message;
     private boolean isCancel = false;
     private ProgressCancelListener progressCancelListener;
 
-    public ProgressBarDialog init(FragmentActivity activity) {
+    public MyProgressBarDialog init(FragmentActivity activity) {
         this.mActivity = activity;
         return this;
     }
 
-    public ProgressBarDialog setCancel(boolean cancel) {
+    public MyProgressBarDialog setCancel(boolean cancel) {
         isCancel = cancel;
         if (getDialog() != null) {
             getDialog().setCancelable(isCancel);
@@ -45,7 +45,7 @@ public class ProgressBarDialog extends DialogFragment {
         return this;
     }
 
-    public ProgressBarDialog setProgressCancelListener(ProgressCancelListener progressCancelListener) {
+    public MyProgressBarDialog setProgressCancelListener(ProgressCancelListener progressCancelListener) {
         this.progressCancelListener = progressCancelListener;
         return this;
     }
@@ -79,7 +79,7 @@ public class ProgressBarDialog extends DialogFragment {
         getDialog().setCanceledOnTouchOutside(false);
     }
 
-    public ProgressBarDialog setData(String message) {
+    public MyProgressBarDialog setData(String message) {
         this.message = message;
         return this;
     }

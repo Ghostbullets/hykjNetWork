@@ -88,12 +88,8 @@ public abstract class ProgressSubscribe<T> implements ProgressBarDialog.Progress
      * 显示进度条
      */
     public void showProgress(String message) {
-        showProgress(message, null, null);
-    }
-
-    public void showProgress(String message, @ProgressBarDialog.BackgroundType Integer backgroundType, Object backgroundResource) {
         if (mHub != null) {
-            mHub.showProgress(message, backgroundType, backgroundResource);
+            mHub.showProgress(message);
         }
     }
 

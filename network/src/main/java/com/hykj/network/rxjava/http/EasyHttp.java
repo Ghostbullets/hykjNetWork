@@ -1,6 +1,5 @@
 package com.hykj.network.rxjava.http;
 
-import com.hykj.network.dialog.ProgressBarDialog;
 import com.hykj.network.rxjava.port.AbsTransformer;
 import com.hykj.network.rxjava.port.ApplyTransformer;
 import com.hykj.network.rxjava.port.IntervalCallBack;
@@ -41,16 +40,11 @@ public class EasyHttp {
     private Observable mObservable;
     private boolean showProgress;
     private String progress;
-    private @ProgressBarDialog.BackgroundType
-    Integer backgroundType;
-    private Object backgroundResource;
 
     private EasyHttp(Builder builder) {
         mObservable = builder.observable;
         showProgress = builder.showProgress;
         progress = builder.progress;
-        backgroundType=builder.backgroundType;
-        backgroundResource=builder.backgroundResource;
     }
 
     public void toSubscribe(RxView mView, Object event, final ProgressSubscribe progressSubscribe) {
@@ -61,7 +55,7 @@ public class EasyHttp {
             @Override
             public void accept(Disposable disposable) throws Exception {
                 if (showProgress) {
-                    progressSubscribe.showProgress(progress,backgroundType,backgroundResource);
+                    progressSubscribe.showProgress(progress);
                 }
                 progressSubscribe.preLoad();
             }
@@ -73,9 +67,6 @@ public class EasyHttp {
         private AbsTransformer transformer;
         private boolean showProgress;
         private String progress;
-        private @ProgressBarDialog.BackgroundType
-        Integer backgroundType;
-        private Object backgroundResource;
         private int number = 0;
 
         public Builder(Observable observable, AbsTransformer transformer) {
@@ -256,12 +247,6 @@ public class EasyHttp {
 
         public Builder progress(String val) {
             this.progress = val;
-            return this;
-        }
-
-        public Builder background(@ProgressBarDialog.BackgroundType Integer backgroundType, Object backgroundResource) {
-            this.backgroundType = backgroundType;
-            this.backgroundResource=backgroundResource;
             return this;
         }
 

@@ -14,6 +14,7 @@ import com.hykj.network.bjzhdj.rec.PageData;
 public abstract class MyProgressSubscribe<T> extends ProgressSubscribe<T> {
     private boolean needLogin = true;
     private PageInfo pageInfo;//用于分页结束数据
+    private MyProgressBarDialog dialog;//使用这种方法替换弹窗
 
     public PageInfo getPageInfo() {
         return pageInfo;
@@ -21,11 +22,13 @@ public abstract class MyProgressSubscribe<T> extends ProgressSubscribe<T> {
 
     public MyProgressSubscribe(FragmentActivity activity) {
         super(activity);
+        dialog=new MyProgressBarDialog().init(activity);
     }
 
     public MyProgressSubscribe(FragmentActivity activity, PageInfo pageInfo) {
         super(activity);
         this.pageInfo = pageInfo;
+        dialog=new MyProgressBarDialog().init(activity);
     }
 
     public MyProgressSubscribe<T> setNeedLogin(boolean needLogin) {
@@ -60,5 +63,23 @@ public abstract class MyProgressSubscribe<T> extends ProgressSubscribe<T> {
         super.onFinish();
         if (pageInfo != null)//设置加载结束
             pageInfo.setLoading(false);
+    }
+
+    @Override
+    public void showProgress(String message) {
+        //super.showProgress(message);
+        dialog.showProgress(message);
+    }
+
+    @Override
+    public void onComplete() {
+        super.onComplete();
+        dialog.dismiss();
+    }
+
+    @Override
+    public void onError(Throwable e) {
+        super.onError(e);
+        dialog.dismiss();
     }
 }
