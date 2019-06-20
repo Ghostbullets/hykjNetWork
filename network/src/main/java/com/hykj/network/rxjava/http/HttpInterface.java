@@ -86,7 +86,10 @@ public class HttpInterface {
                             return (ObservableSource<T>) createData(h);
                         }
                     }
-                });
+                }).subscribeOn(Schedulers.io())
+                        .unsubscribeOn(Schedulers.io())
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .observeOn(AndroidSchedulers.mainThread());
             }
         };
     }

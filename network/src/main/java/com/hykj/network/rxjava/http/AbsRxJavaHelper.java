@@ -32,6 +32,20 @@ import io.reactivex.functions.Function9;
  */
 public abstract class AbsRxJavaHelper<T> {
 
+    protected boolean isFailResultObject;//是否在数据获取失败时返回Object泛型的被观察者，而不是error的被观察者,默认false，请注意在网络请求结束后恢复状态为false
+
+    public void setFailResultObject(boolean isFailResultObject) {
+        this.isFailResultObject = isFailResultObject;
+    }
+
+    //处理网络请求返回的数据，配合isFailResultObject参数使用
+    public Object disposeResult(Object o) {
+        if (o.getClass().getName().equals(Object.class.getName())) {
+            return null;
+        }
+        return o;
+    }
+
     /**
      * 将上游的H 转换成T，并再次发送，具体转换由继承AbsRxJavaHelper的类来处理(比如：BaseRec<T>转换成T)
      * 可参考 bjzhdj里面的RxJavaHelper 的handleResult()方法如何处理{@link com.hykj.network.bjzhdj.http.RxJavaHelper {@link #handleResult()}}
@@ -112,10 +126,10 @@ public abstract class AbsRxJavaHelper<T> {
      * @param <H>
      */
     public <T, H> void zipToSubscribe(Observable ob1, Observable ob2, final boolean isShowProgress, final String progress, RxView mView, Object event, final ProgressSubscribe progressSubscribe) {
-        Observable zip = Observable.zip(ob1.compose(handleResult()), ob2.compose(handleResult()), new BiFunction<T, H, ResultData<T, H>>() {
+        Observable zip = Observable.zip(ob1.compose(handleResult()), ob2.compose(handleResult()), new BiFunction<Object, Object, ResultData<T, H>>() {
             @Override
-            public ResultData<T, H> apply(T t, H h) throws Exception {//只有所有请求都成功才会走这里，并走到ProgressSubscribe的onResponse方法
-                return new ResultData<>(t, h);
+            public ResultData<T, H> apply(Object t, Object h) throws Exception {//只有所有请求都成功才会走这里，并走到ProgressSubscribe的onResponse方法
+                return (ResultData<T, H>) new ResultData<>(disposeResult(t), disposeResult(h));
             }
         });
         if (mView != null && mView.bindToUntilEvent(event) != null) {
@@ -156,10 +170,10 @@ public abstract class AbsRxJavaHelper<T> {
      * @param <Z>
      */
     public <T, H, Z> void zipToSubscribe(Observable ob1, Observable ob2, Observable ob3, final boolean isShowProgress, final String progress, RxView mView, Object event, final ProgressSubscribe progressSubscribe) {
-        Observable zip = Observable.zip(ob1.compose(handleResult()), ob2.compose(handleResult()), ob3.compose(handleResult()), new Function3<T, H, Z, ThreeResultData<T, H, Z>>() {
+        Observable zip = Observable.zip(ob1.compose(handleResult()), ob2.compose(handleResult()), ob3.compose(handleResult()), new Function3<Object, Object, Object, ThreeResultData<T, H, Z>>() {
             @Override
-            public ThreeResultData<T, H, Z> apply(T t, H h, Z z) throws Exception {//只有所有请求都成功才会走这里，并走到ProgressSubscribe的onResponse方法
-                return new ThreeResultData<>(t, h, z);
+            public ThreeResultData<T, H, Z> apply(Object t, Object h, Object z) throws Exception {//只有所有请求都成功才会走这里，并走到ProgressSubscribe的onResponse方法
+                return (ThreeResultData<T, H, Z>) new ThreeResultData<>(disposeResult(t), disposeResult(h), disposeResult(z));
             }
         });
         if (mView != null && mView.bindToUntilEvent(event) != null) {
@@ -198,10 +212,10 @@ public abstract class AbsRxJavaHelper<T> {
      * @param <X>
      */
     public <T, H, Z, X> void zipToSubscribe(Observable ob1, Observable ob2, Observable ob3, Observable ob4, final boolean isShowProgress, final String progress, RxView mView, Object event, final ProgressSubscribe progressSubscribe) {
-        Observable zip = Observable.zip(ob1.compose(handleResult()), ob2.compose(handleResult()), ob3.compose(handleResult()), ob4.compose(handleResult()), new Function4<T, H, Z, X, FourResultData<T, H, Z, X>>() {
+        Observable zip = Observable.zip(ob1.compose(handleResult()), ob2.compose(handleResult()), ob3.compose(handleResult()), ob4.compose(handleResult()), new Function4<Object, Object, Object, Object, FourResultData<T, H, Z, X>>() {
             @Override
-            public FourResultData<T, H, Z, X> apply(T t, H h, Z z, X x) throws Exception {
-                return new FourResultData<>(t, h, z, x);
+            public FourResultData<T, H, Z, X> apply(Object t, Object h, Object z, Object x) throws Exception {
+                return (FourResultData<T, H, Z, X>) new FourResultData<>(disposeResult(t), disposeResult(h), disposeResult(z), disposeResult(x));
             }
         });
         if (mView != null && mView.bindToUntilEvent(event) != null) {

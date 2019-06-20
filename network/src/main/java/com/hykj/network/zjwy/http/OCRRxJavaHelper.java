@@ -41,8 +41,12 @@ public class OCRRxJavaHelper<T> extends AbsRxJavaHelper<T> {
                             OCRRec<T> bean = (OCRRec<T>) o;
                             if ("OK".equals(bean.getStatus())) {
                                 return createData(bean.getData());
-                            } else
+                            } else {
+                                if (isFailResultObject) {
+                                    return createData(null);
+                                }
                                 return Observable.error(new ApiOCRException(bean));
+                            }
                         } else {
                             return createData((T) o);
                         }

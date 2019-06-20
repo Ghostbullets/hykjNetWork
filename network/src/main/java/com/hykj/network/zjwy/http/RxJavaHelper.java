@@ -43,6 +43,9 @@ public class RxJavaHelper<T> extends AbsRxJavaHelper<T> {
                             if ("true".equals(bean.getSuccess())) {
                                 return createData(bean.getData());
                             } else {
+                                if (isFailResultObject) {
+                                    return createData(null);
+                                }
                                 return Observable.error(new ApiException(bean));
                             }
                         } else {

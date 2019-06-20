@@ -14,13 +14,13 @@ public class ReflectUtils {
     /**
      * 通过反射将类中的属性名、属性值以键值对返回
      *
-     * @param params    传入的map集合
-     * @param target 目标类
-     * @param floorCls  底层class，目标class持续的从父类中反射属性键值对，直到它的父类名等于该类名
+     * @param params   传入的map集合
+     * @param target   目标类
+     * @param floorCls 底层class，目标class持续的从父类中反射属性键值对，直到它的父类名等于该类名
      * @return
      */
     public static Map<String, String> progressData(Map<String, String> params, @NonNull Object target, Class<?> floorCls) {
-        Class<?> targetCls=target.getClass();
+        Class<?> targetCls = target.getClass();
         if (params == null)
             params = new LinkedHashMap<>();
         if (floorCls == null)
@@ -54,9 +54,10 @@ public class ReflectUtils {
 
     /**
      * 反射修改对象属性值
-     * @param obj 类对象
+     *
+     * @param obj       类对象
      * @param fieldName 类属性名
-     * @param value 类属性名对应的属性值
+     * @param value     类属性名对应的属性值
      */
     public static void setFieldValue(Object obj, String fieldName, Object value) {
         if (obj == null || TextUtils.isEmpty(fieldName)) return;
@@ -69,7 +70,8 @@ public class ReflectUtils {
                 field.set(fieldName, value);
                 return;
             } catch (Exception e) {
-                e.printStackTrace();
+                if (!(e instanceof NoSuchFieldException))
+                    e.printStackTrace();
             }
             clazz = clazz.getSuperclass();
         }

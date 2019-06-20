@@ -11,7 +11,14 @@ import io.reactivex.Observable;
  * created by cjf
  * on:2019/4/11 19:35
  */
-public class TransformerResult<T> implements AbsTransformer<BaseRec<T>,T> {
+public class TransformerResult<T> extends AbsTransformer<BaseRec<T>, T> {
+    public TransformerResult() {
+    }
+
+    public TransformerResult(boolean isFailResultObject) {
+        super(isFailResultObject);
+    }
+
     @Override
     public Observable<T> transformerResult(BaseRec<T> bean) {
         if (bean.getCode() == 0) {
@@ -25,6 +32,9 @@ public class TransformerResult<T> implements AbsTransformer<BaseRec<T>,T> {
                 }
             }
         } else {
+            if (isFailResultObject) {
+                return HttpInterface.createData(null);
+            }
             return Observable.error(new ApiException(bean));
         }
     }

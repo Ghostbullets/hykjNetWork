@@ -72,7 +72,7 @@ public abstract class ProgressSubscribe<T> implements ProgressBarDialog.Progress
         if (!TextUtils.isEmpty(name) && name.contains("<") && name.contains(">")) {
             name = name.substring(0, name.indexOf("<"));
         }
-        if (name.contains(List.class.getName()) && !(t instanceof List)) {
+        if (!TextUtils.isEmpty(name) && name.contains(List.class.getName()) && !(t instanceof List)) {
             onResponse((T) new ArrayList<>());
         } else {
             onResponse(t);
