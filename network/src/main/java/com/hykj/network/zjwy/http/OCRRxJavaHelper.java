@@ -15,7 +15,7 @@ import io.reactivex.schedulers.Schedulers;
  * on:2019/5/6 10:50
  * 云脉的网络请求帮助类
  */
-public class OCRRxJavaHelper<T> extends AbsRxJavaHelper<OCRRec<T>, T> {
+public class OCRRxJavaHelper<T> extends AbsRxJavaHelper<T> {
     private static OCRRxJavaHelper mInstance;
 
     public static OCRRxJavaHelper getInstance() {
@@ -29,17 +29,23 @@ public class OCRRxJavaHelper<T> extends AbsRxJavaHelper<OCRRec<T>, T> {
     }
 
     @Override
-    protected ObservableTransformer<OCRRec<T>, T> handleResult() {
-        return new ObservableTransformer<OCRRec<T>, T>() {
+    protected ObservableTransformer<Object, T> handleResult() {
+        return new ObservableTransformer<Object, T>() {
             @Override
-            public ObservableSource<T> apply(Observable<OCRRec<T>> upstream) {
-                return upstream.flatMap(new Function<OCRRec<T>, ObservableSource<T>>() {
+            public ObservableSource<T> apply(Observable<Object> upstream) {
+                return upstream.flatMap(new Function<Object, ObservableSource<T>>() {
                     @Override
-                    public ObservableSource<T> apply(OCRRec<T> bean) throws Exception {
-                        if ("OK".equals(bean.getStatus())) {
-                            return createData(bean.getData());
-                        } else
-                            return Observable.error(new ApiOCRException(bean));
+                    public ObservableSource<T> apply(Object o) throws Exception {
+                        //如果上游已经是T类型数据，则直接返回，不做转换
+                        if (o instanceof OCRRec) {
+                            OCRRec<T> bean = (OCRRec<T>) o;
+                            if ("OK".equals(bean.getStatus())) {
+                                return createData(bean.getData());
+                            } else
+                                return Observable.error(new ApiOCRException(bean));
+                        } else {
+                            return createData((T) o);
+                        }
                     }
                 }).subscribeOn(Schedulers.io())
                         .unsubscribeOn(Schedulers.io())

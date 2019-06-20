@@ -30,7 +30,7 @@ import io.reactivex.functions.Function9;
  * created by cjf
  * on:2019/2/26 14:39
  */
-public abstract class AbsRxJavaHelper<H, T> {
+public abstract class AbsRxJavaHelper<T> {
 
     /**
      * 将上游的H 转换成T，并再次发送，具体转换由继承AbsRxJavaHelper的类来处理(比如：BaseRec<T>转换成T)
@@ -38,7 +38,7 @@ public abstract class AbsRxJavaHelper<H, T> {
      *
      * @return
      */
-    protected abstract ObservableTransformer<H, T> handleResult();
+    protected abstract ObservableTransformer<Object, T> handleResult();
 
     /**
      * 创建新的Observable并发送解析后的数据

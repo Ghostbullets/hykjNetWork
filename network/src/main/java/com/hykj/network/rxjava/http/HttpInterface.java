@@ -73,23 +73,20 @@ public class HttpInterface {
      * @param <T>         转换后返回的被观察者持有的泛型
      * @return
      */
-    public static <H, T> ObservableTransformer<H, T> handleResult(final AbsTransformer<H, T> transformer) {
-        return new ObservableTransformer<H, T>() {
+    public static <H, T> ObservableTransformer<Object, T> handleResult(final AbsTransformer<H, T> transformer) {
+        return new ObservableTransformer<Object, T>() {
             @Override
-            public ObservableSource<T> apply(Observable<H> upstream) {
-                return upstream.flatMap(new Function<H, ObservableSource<T>>() {
+            public ObservableSource<T> apply(Observable<Object> upstream) {
+                return upstream.flatMap(new Function<Object, ObservableSource<T>>() {
                     @Override
-                    public ObservableSource<T> apply(H h) throws Exception {
+                    public ObservableSource<T> apply(Object h) throws Exception {
                         try {
-                            return transformer.transformerResult(h);
+                            return transformer.transformerResult((H) h);
                         } catch (Exception e) {
                             return (ObservableSource<T>) createData(h);
                         }
                     }
-                }).subscribeOn(Schedulers.io())
-                        .unsubscribeOn(Schedulers.io())
-                        .subscribeOn(AndroidSchedulers.mainThread())
-                        .observeOn(AndroidSchedulers.mainThread());
+                });
             }
         };
     }

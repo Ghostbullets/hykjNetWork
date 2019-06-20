@@ -15,7 +15,7 @@ import io.reactivex.schedulers.Schedulers;
  * created by cjf
  * on:2019/4/11 19:21
  */
-public class RxJavaHelper<T> extends AbsRxJavaHelper<BaseRec<T>, T> {
+public class RxJavaHelper<T> extends AbsRxJavaHelper<T> {
 
     private static RxJavaHelper mInstance;
 
@@ -30,25 +30,31 @@ public class RxJavaHelper<T> extends AbsRxJavaHelper<BaseRec<T>, T> {
     }
 
     @Override
-    protected ObservableTransformer<BaseRec<T>, T> handleResult() {
-        return new ObservableTransformer<BaseRec<T>, T>() {
+    protected ObservableTransformer<Object, T> handleResult() {
+        return new ObservableTransformer<Object, T>() {
             @Override
-            public ObservableSource<T> apply(Observable<BaseRec<T>> upstream) {
-                return upstream.flatMap(new Function<BaseRec<T>, ObservableSource<T>>() {
+            public ObservableSource<T> apply(Observable<Object> upstream) {
+                return upstream.flatMap(new Function<Object, ObservableSource<T>>() {
                     @Override
-                    public ObservableSource<T> apply(BaseRec<T> bean) throws Exception {
-                        if (bean.getCode() == 0) {
-                            if (bean.getData() != null) {
-                                return createData(bean.getData());
-                            } else {
-                                try {
-                                    return createData((T) new PageData<>(bean.getRows(), bean.getTotal()));
-                                } catch (Exception e) {
-                                    return createData((T) bean.getRows());
+                    public ObservableSource<T> apply(Object o) throws Exception {
+                        //如果上游已经是T类型数据，则直接返回，不做转换
+                        if (o instanceof BaseRec) {
+                            BaseRec<T> bean = (BaseRec<T>) o;
+                            if (bean.getCode() == 0) {
+                                if (bean.getData() != null) {
+                                    return createData(bean.getData());
+                                } else {
+                                    try {
+                                        return createData((T) new PageData<>(bean.getRows(), bean.getTotal()));
+                                    } catch (Exception e) {
+                                        return createData((T) bean.getRows());
+                                    }
                                 }
+                            } else {
+                                return Observable.error(new ApiException(bean));
                             }
                         } else {
-                            return Observable.error(new ApiException(bean));
+                            return createData((T) o);
                         }
                     }
                 }).subscribeOn(Schedulers.io())
