@@ -62,6 +62,14 @@ public class EasyHttp {
         }).subscribe(progressSubscribe);
     }
 
+    /**
+     * 返回Observable可用于合并请求
+     * @return
+     */
+    public Observable getObservable(){
+        return mObservable;
+    }
+
     public static final class Builder {
         private Observable observable;
         private AbsTransformer transformer;
