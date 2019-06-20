@@ -123,5 +123,6 @@ public abstract class ProgressSubscribe<T> implements ProgressBarDialog.Progress
         if (disposable != null && !disposable.isDisposed()) {
             disposable.dispose();
         }
+        //如果设置了AbsRxJavaHelper的isFailResultObject=true,则在这里要将他恢复为false
     }
 }

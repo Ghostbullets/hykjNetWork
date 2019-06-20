@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentActivity;
 import com.hykj.network.bjzhdj.http.ApiException;
 import com.hykj.network.bjzhdj.http.ProgressSubscribe;
 import com.hykj.network.bjzhdj.rec.PageData;
+import com.hykj.network.zjwy.http.RxJavaHelper;
 
 /**
  * created by cjf
@@ -61,6 +62,8 @@ public abstract class MyProgressSubscribe<T> extends ProgressSubscribe<T> {
     @Override
     protected void onFinish() {
         super.onFinish();
+        //自定义的一定要写这个方法
+        RxJavaHelper.getInstance().setFailResultObject(false);
         if (pageInfo != null)//设置加载结束
             pageInfo.setLoading(false);
     }

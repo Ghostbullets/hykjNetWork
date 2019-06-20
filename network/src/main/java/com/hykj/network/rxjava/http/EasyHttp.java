@@ -64,9 +64,10 @@ public class EasyHttp {
 
     /**
      * 返回Observable可用于合并请求
+     *
      * @return
      */
-    public Observable getObservable(){
+    public Observable getObservable() {
         return mObservable;
     }
 
@@ -240,6 +241,8 @@ public class EasyHttp {
                     return upstream.flatMap(new Function() {
                         @Override
                         public Object apply(Object o) throws Exception {
+                            if (o.getClass().getName().equals(Object.class.getName()))
+                                o = null;
                             return transformer.apply(o).compose(HttpInterface.handleResult(Builder.this.transformer));
                         }
                     });
