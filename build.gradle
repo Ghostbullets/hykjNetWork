@@ -34,6 +34,9 @@ allprojects {
                 password properties.getProperty("PASSWORD")
             }
         }
+        flatDir{
+            dirs '../network/libs','libs'
+        }
     }
 }
 
