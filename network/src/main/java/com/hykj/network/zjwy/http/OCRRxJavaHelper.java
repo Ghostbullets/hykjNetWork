@@ -1,6 +1,7 @@
 package com.hykj.network.zjwy.http;
 
-import com.hykj.network.rxjava.http.AbsRxJavaHelper;
+
+import com.base.network.rxjava.http.AbsRxJavaHelper;
 import com.hykj.network.zjwy.rec.OCRRec;
 
 import io.reactivex.Observable;

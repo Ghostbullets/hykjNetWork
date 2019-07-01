@@ -63,7 +63,7 @@ public abstract class MyProgressSubscribe<T> extends ProgressSubscribe<T> {
     protected void onFinish() {
         super.onFinish();
         //自定义的一定要写这个方法
-        RxJavaHelper.getInstance().setFailResultObject(false);
+        //RxJavaHelper.getInstance().setFailResultObject(false);
         if (pageInfo != null)//设置加载结束
             pageInfo.setLoading(false);
     }

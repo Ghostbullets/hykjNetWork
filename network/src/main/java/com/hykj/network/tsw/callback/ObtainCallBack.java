@@ -3,9 +3,9 @@ package com.hykj.network.tsw.callback;
 
 import android.support.v4.app.FragmentActivity;
 
+import com.base.network.rxjava.bean.PageInfo;
 import com.google.gson.Gson;
 import com.hykj.network.dialog.ProgressBarDialog;
-import com.hykj.network.rxjava.bean.PageInfo;
 import com.hykj.network.tsw.rec.BaseRec;
 
 import java.lang.ref.WeakReference;

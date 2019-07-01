@@ -1,7 +1,8 @@
 package com.hykj.network.zjwy.http;
 
-import com.hykj.network.rxjava.http.HttpInterface;
-import com.hykj.network.rxjava.port.AbsTransformer;
+
+import com.base.network.rxjava.http.HttpInterface;
+import com.base.network.rxjava.port.AbsTransformer;
 import com.hykj.network.zjwy.rec.BaseRec;
 
 import io.reactivex.Observable;

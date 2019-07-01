@@ -20,6 +20,20 @@ allprojects {
         google()
         jcenter()
         maven { url 'https//jitpack.io' }
+        maven{
+            url 'https://api.bitbucket.org/2.0/repositories/Ghostbullets/private_maven/src/releases'
+            authentication{
+                basic(BasicAuthentication)
+            }
+            credentials{
+                Properties properties=new Properties()
+                if (rootProject.file("private.properties").exists()){
+                    properties.load(rootProject.file("private.properties").newDataInputStream())
+                }
+                username properties.getProperty("USERNAME")
+                password properties.getProperty("PASSWORD")
+            }
+        }
     }
 }
 

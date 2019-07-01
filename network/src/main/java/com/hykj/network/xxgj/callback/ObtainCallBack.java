@@ -3,9 +3,9 @@ package com.hykj.network.xxgj.callback;
 
 import android.support.v4.app.FragmentActivity;
 
+import com.base.network.rxjava.bean.PageInfo;
 import com.google.gson.Gson;
 import com.hykj.network.dialog.ProgressBarDialog;
-import com.hykj.network.rxjava.bean.PageInfo;
 import com.hykj.network.xxgj.rec.BaseRec;
 
 import java.lang.reflect.ParameterizedType;
