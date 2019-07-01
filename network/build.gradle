@@ -38,7 +38,7 @@ dependencies {
     api 'com.google.code.gson:gson:2.8.5'
     api 'com.squareup.okio:okio:1.14.0'
     //网络请求依赖库
-    compileOnly 'com.base.network:network:1.0.0'
+    api 'com.base.network:network:1.0.0'
     //rxjava
     api 'io.reactivex.rxjava2:rxjava:2.1.16'
     api 'io.reactivex.rxjava2:rxandroid:2.0.1'
