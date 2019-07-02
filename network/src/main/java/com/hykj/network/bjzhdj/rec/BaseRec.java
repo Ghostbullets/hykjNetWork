@@ -9,14 +9,14 @@ public class BaseRec<T> {
      * msg : 成功
      * total: 分页数据在数据库中的总数
      */
-    private int code;
+    private Integer code;
     private String msg;
     private Integer total;
     private T data;
     private T rows;
     private Integer role;
 
-    public int getCode() {
+    public Integer getCode() {
         return code;
     }
 

@@ -1,9 +1,8 @@
 package com.hykj.network.ags.http;
 
 import com.base.network.rxjava.http.AbsRxJavaHelper;
-import com.base.network.rxjava.req.AbsReq;
+import com.base.network.rxjava.rec.PageData;
 import com.hykj.network.ags.rec.BaseRec;
-import com.hykj.network.ags.rec.PageData;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;

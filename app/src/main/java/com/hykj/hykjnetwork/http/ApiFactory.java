@@ -1,6 +1,6 @@
 package com.hykj.hykjnetwork.http;
 
-import com.hykj.network.bjzhdj.http.ApiFactoryAbs;
+import com.base.network.rxjava.http.ApiFactoryAbs;
 
 /**
  * created by cjf

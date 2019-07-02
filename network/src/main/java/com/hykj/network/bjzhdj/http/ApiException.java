@@ -24,7 +24,7 @@ public class ApiException extends RuntimeException {
         return errorRec.getMsg();
     }
 
-    public int getCode() {
+    public Integer getCode() {
         return errorRec.getCode();
     }
 }

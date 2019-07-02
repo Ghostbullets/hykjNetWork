@@ -2,10 +2,9 @@ package com.hykj.hykjnetwork.http;
 
 import android.support.v4.app.FragmentActivity;
 
+import com.base.network.rxjava.http.ProgressSubscribe;
 import com.hykj.network.bjzhdj.http.ApiException;
-import com.hykj.network.bjzhdj.http.ProgressSubscribe;
 import com.hykj.network.bjzhdj.rec.PageData;
-import com.hykj.network.zjwy.http.RxJavaHelper;
 
 /**
  * created by cjf
@@ -45,7 +44,7 @@ public abstract class MyProgressSubscribe<T> extends ProgressSubscribe<T> {
     @Override
     protected void onFailure(Throwable e) {
         super.onFailure(e);
-        if (e instanceof ApiException && mActivity.get() != null) {
+        if (e instanceof ApiException && b.get() != null) {
             //VerifyCodeUtils.dispose(mActivity.get(), ((ApiException) e).getErrorRec(), needLogin);
         } else {
             //Tip.showShort(e.getMessage());
