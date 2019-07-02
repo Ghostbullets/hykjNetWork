@@ -8,6 +8,11 @@
  然后新建一个类，继承AbsReq，并实现添加头部param的接口。
  
  如果要使用rxjava请求，请看下面,具体使用可参考RxJavaHelper
+3.0.0以上版本gradle引用依赖 implementation 'com.base.network:network:1.0.0' ，如果是3.0.0以下版本的gradle的话，请使用
+ compile('com.base.network:network:1.0.0'){
+   exclude group:'com.android.support'//移除三方库中的support包
+ }
+ 仓库maven{url 'https://raw.githubusercontent.com/Ghostbullets/MavenTest/master'}
  
 public abstract class AbsReq<H> {
     private String baseUrl;//基础请求url
