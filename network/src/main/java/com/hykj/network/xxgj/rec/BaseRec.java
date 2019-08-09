@@ -6,13 +6,11 @@ package com.hykj.network.xxgj.rec;
 public class BaseRec<T> {
     /**
      * code : 0
-     * msg : 成功
+     * msg : 成功 不需要row跟total，因为这个project已经有另一个PageRec了
      */
     private Integer code;
     private String msg;
-    private Integer total;
     private T data;
-    private T rows;
 
     public int getCode() {
         return code;
@@ -22,15 +20,7 @@ public class BaseRec<T> {
         return msg;
     }
 
-    public Integer getTotal() {
-        return total;
-    }
-
     public T getData() {
         return data;
-    }
-
-    public T getRows() {
-        return rows;
     }
 }
