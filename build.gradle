@@ -18,8 +18,8 @@ buildscript {
 allprojects {
     repositories {
         google()
-        jcenter()
         maven { url 'https//jitpack.io' }
+        jcenter()
         maven{//远程retrofit网络请求依赖库的仓库地址
             url 'https://raw.githubusercontent.com/Ghostbullets/MavenTest/master'
         }
