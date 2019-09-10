@@ -5,6 +5,8 @@ import com.base.network.rxjava.http.HttpInterface;
 import com.base.network.rxjava.rec.PageData;
 import com.hykj.network.zhitongche.rec.BaseRec;
 
+import java.util.List;
+
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
@@ -43,6 +45,9 @@ public class RxJavaHelper<T> extends AbsRxJavaHelper<T> {
                             BaseRec bean = (BaseRec) o;
                             if (bean.getCode() != null && bean.getCode() == 0) {
                                 if (bean.getData() != null) {
+                                    if (bean.getData() instanceof List) {
+                                        return HttpInterface.createData((T) new PageData<>(bean.getData(), bean.getTotal()));
+                                    }
                                     return (ObservableSource<T>) HttpInterface.createData(bean.getData());
                                 } else {
                                     try {
