@@ -2,6 +2,7 @@ package com.hykj.network.zjwy.http;
 
 
 import com.base.network.rxjava.http.AbsRxJavaHelper;
+import com.base.network.rxjava.http.HttpInterface;
 import com.hykj.network.zjwy.rec.OCRRec;
 
 import io.reactivex.Observable;
@@ -16,7 +17,7 @@ import io.reactivex.schedulers.Schedulers;
  * on:2019/5/6 10:50
  * 云脉的网络请求帮助类
  */
-public class OCRRxJavaHelper<T> extends AbsRxJavaHelper<T> {
+public class OCRRxJavaHelper<T> extends AbsRxJavaHelper {
     private static OCRRxJavaHelper mInstance;
 
     public static OCRRxJavaHelper getInstance() {
@@ -30,7 +31,7 @@ public class OCRRxJavaHelper<T> extends AbsRxJavaHelper<T> {
     }
 
     @Override
-    protected ObservableTransformer<Object, T> handleResult() {
+    public ObservableTransformer<Object, T> handleResult() {
         return new ObservableTransformer<Object, T>() {
             @Override
             public ObservableSource<T> apply(Observable<Object> upstream) {
@@ -41,15 +42,15 @@ public class OCRRxJavaHelper<T> extends AbsRxJavaHelper<T> {
                         if (o instanceof OCRRec) {
                             OCRRec<T> bean = (OCRRec<T>) o;
                             if ("OK".equals(bean.getStatus())) {
-                                return createData(bean.getData());
+                                return HttpInterface.createData(bean.getData());
                             } else {
-                                if (isFailResultObject) {
-                                    return createData(null);
+                                if (isFailResultObject()) {
+                                    return HttpInterface.createData(null);
                                 }
                                 return Observable.error(new ApiOCRException(bean));
                             }
                         } else {
-                            return createData((T) o);
+                            return HttpInterface.createData((T) o);
                         }
                     }
                 }).subscribeOn(Schedulers.io())

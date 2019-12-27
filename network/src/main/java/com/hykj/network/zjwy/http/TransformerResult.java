@@ -26,7 +26,7 @@ public class TransformerResult<T> extends AbsTransformer<BaseRec<T>, T> {
         if (bean.isSuccess()) {
             return HttpInterface.createData(bean.getData());
         } else {
-            if (isFailResultObject) {
+            if (isFailResultObject()) {
                 return HttpInterface.createData(null);
             }
             return Observable.error(new ApiException(bean));

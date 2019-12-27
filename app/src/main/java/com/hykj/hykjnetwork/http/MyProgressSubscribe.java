@@ -1,10 +1,13 @@
 package com.hykj.hykjnetwork.http;
 
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
 import com.base.network.rxjava.http.ProgressSubscribe;
 import com.hykj.network.bjzhdj.http.ApiException;
 import com.hykj.network.bjzhdj.rec.PageData;
+
+import org.jetbrains.annotations.Nullable;
 
 /**
  * created by cjf
@@ -20,15 +23,28 @@ public abstract class MyProgressSubscribe<T> extends ProgressSubscribe<T> {
         return pageInfo;
     }
 
-    public MyProgressSubscribe(FragmentActivity activity) {
+    public MyProgressSubscribe() {
+    }
+
+    public MyProgressSubscribe(@Nullable FragmentActivity activity) {
         super(activity);
-        dialog=new MyProgressBarDialog().init(activity);
+        dialog = new MyProgressBarDialog().init(activity);
+    }
+
+    public MyProgressSubscribe(@Nullable Fragment fragment) {
+        super(fragment);
     }
 
     public MyProgressSubscribe(FragmentActivity activity, PageInfo pageInfo) {
         super(activity);
         this.pageInfo = pageInfo;
-        dialog=new MyProgressBarDialog().init(activity);
+        dialog = new MyProgressBarDialog().init(activity);
+    }
+
+    public MyProgressSubscribe(Fragment fragment, PageInfo pageInfo) {
+        super(fragment);
+        this.pageInfo = pageInfo;
+        dialog = new MyProgressBarDialog().init(fragment.getActivity());
     }
 
     public MyProgressSubscribe<T> setNeedLogin(boolean needLogin) {
@@ -42,10 +58,17 @@ public abstract class MyProgressSubscribe<T> extends ProgressSubscribe<T> {
     }
 
     @Override
-    protected void onFailure(Throwable e) {
+    public void onFailure(Throwable e) {
         super.onFailure(e);
-        if (e instanceof ApiException && b.get() != null) {
-            //VerifyCodeUtils.dispose(mActivity.get(), ((ApiException) e).getErrorRec(), needLogin);
+//        if (e instanceof ApiException && b.get() != null) {
+//            //VerifyCodeUtils.dispose(mActivity.get(), ((ApiException) e).getErrorRec(), needLogin);
+//        } else {
+//            //Tip.showShort(e.getMessage());
+//        }
+        if (e instanceof ApiException && getFragment() != null && getFragment().get() != null) {
+            //VerifyCodeUtils.dispose(getMFragment().get(), ((ApiException) e).getErrorRec());
+        } else if (e instanceof ApiException && getActivity() != null && getActivity().get() != null) {
+            //VerifyCodeUtils.dispose(getMActivity().get(), ((ApiException) e).getErrorRec());
         } else {
             //Tip.showShort(e.getMessage());
         }
@@ -59,7 +82,7 @@ public abstract class MyProgressSubscribe<T> extends ProgressSubscribe<T> {
     }
 
     @Override
-    protected void onFinish() {
+    public void onFinish() {
         super.onFinish();
         //自定义的一定要写这个方法
         //RxJavaHelper.getInstance().setFailResultObject(false);
@@ -68,7 +91,7 @@ public abstract class MyProgressSubscribe<T> extends ProgressSubscribe<T> {
     }
 
     @Override
-    public void showProgress(String message) {
+    public void showProgress(@Nullable CharSequence message) {
         //super.showProgress(message);
         dialog.showProgress(message);
     }

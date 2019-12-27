@@ -1,6 +1,7 @@
 package com.hykj.network.zjwy.http;
 
 import com.base.network.rxjava.http.AbsRxJavaHelper;
+import com.base.network.rxjava.http.HttpInterface;
 import com.hykj.network.zjwy.rec.BaseRec;
 
 import io.reactivex.Observable;
@@ -15,7 +16,7 @@ import io.reactivex.schedulers.Schedulers;
  * on:2019/4/8 11:15
  * 该项目实现网络请求数据转换
  */
-public class RxJavaHelper<T> extends AbsRxJavaHelper<T> {
+public class RxJavaHelper<T> extends AbsRxJavaHelper {
     private static RxJavaHelper mInstance;
 
     public static RxJavaHelper getInstance() {
@@ -30,7 +31,7 @@ public class RxJavaHelper<T> extends AbsRxJavaHelper<T> {
 
 
     @Override
-    protected ObservableTransformer<Object, T> handleResult() {
+    public ObservableTransformer<Object, T> handleResult() {
         return new ObservableTransformer<Object, T>() {
             @Override
             public ObservableSource<T> apply(Observable<Object> upstream) {
@@ -41,15 +42,15 @@ public class RxJavaHelper<T> extends AbsRxJavaHelper<T> {
                         if (o instanceof BaseRec) {
                             BaseRec<T> bean = (BaseRec<T>) o;
                             if ("true".equals(bean.getSuccess())) {
-                                return createData(bean.getData());
+                                return HttpInterface.createData(bean.getData());
                             } else {
-                                if (isFailResultObject) {
-                                    return createData(null);
+                                if (isFailResultObject()) {
+                                    return HttpInterface.createData(null);
                                 }
                                 return Observable.error(new ApiException(bean));
                             }
                         } else {
-                            return createData((T) o);
+                            return HttpInterface.createData((T) o);
                         }
                     }
                 }).subscribeOn(Schedulers.io())

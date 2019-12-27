@@ -32,7 +32,7 @@ public class TransformerResult<T> extends AbsTransformer<BaseRec<T>, T> {
                 }
             }
         } else {
-            if (isFailResultObject) {
+            if (isFailResultObject()) {
                 //当接口报错时，如果希望返回一个空的被观察者时可设置该变量为true
                 // (PS:常用于zip合并接口请求时使用，防止其中一个接口报错导致其他接口无法获取数据)
                 return HttpInterface.createData(null);

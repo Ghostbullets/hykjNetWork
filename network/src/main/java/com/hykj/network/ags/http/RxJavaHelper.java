@@ -1,6 +1,7 @@
 package com.hykj.network.ags.http;
 
 import com.base.network.rxjava.http.AbsRxJavaHelper;
+import com.base.network.rxjava.http.HttpInterface;
 import com.base.network.rxjava.rec.PageData;
 import com.hykj.network.ags.rec.BaseRec;
 
@@ -15,7 +16,7 @@ import io.reactivex.schedulers.Schedulers;
  * created by cjf
  * on:2019/4/11 19:21
  */
-public class RxJavaHelper<T> extends AbsRxJavaHelper<T> {
+public class RxJavaHelper<T> extends AbsRxJavaHelper {
 
     private static RxJavaHelper mInstance;
 
@@ -30,7 +31,7 @@ public class RxJavaHelper<T> extends AbsRxJavaHelper<T> {
     }
 
     @Override
-    protected ObservableTransformer<Object, T> handleResult() {
+    public ObservableTransformer<Object, T> handleResult() {
         return new ObservableTransformer<Object, T>() {
             @Override
             public ObservableSource<T> apply(Observable<Object> upstream) {
@@ -42,22 +43,22 @@ public class RxJavaHelper<T> extends AbsRxJavaHelper<T> {
                             BaseRec<T> bean = (BaseRec<T>) o;
                             if (bean.getCode() == 0) {
                                 if (bean.getData() != null) {
-                                    return createData(bean.getData());
+                                    return HttpInterface.createData(bean.getData());
                                 } else {
                                     try {
-                                        return createData((T) new PageData<>(bean.getRows(), bean.getTotal()));
+                                        return HttpInterface.createData((T) new PageData<>(bean.getRows(), bean.getTotal()));
                                     } catch (Exception e) {
-                                        return createData((T) bean.getRows());
+                                        return HttpInterface.createData((T) bean.getRows());
                                     }
                                 }
                             } else {
-                                if (isFailResultObject) {
-                                    return createData(null);
+                                if (isFailResultObject()) {
+                                    return HttpInterface.createData(null);
                                 }
                                 return Observable.error(new ApiException(bean));
                             }
                         } else {
-                            return createData((T) o);
+                            return HttpInterface.createData((T) o);
                         }
                     }
                 }).subscribeOn(Schedulers.io())

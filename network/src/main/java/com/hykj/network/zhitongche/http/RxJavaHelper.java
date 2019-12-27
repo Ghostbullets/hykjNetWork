@@ -18,7 +18,7 @@ import io.reactivex.schedulers.Schedulers;
  * created by cjf
  * on: 2019/8/9
  */
-public class RxJavaHelper<T> extends AbsRxJavaHelper<T> {
+public class RxJavaHelper<T> extends AbsRxJavaHelper {
 
     private static RxJavaHelper mInstance;
 
@@ -33,7 +33,7 @@ public class RxJavaHelper<T> extends AbsRxJavaHelper<T> {
     }
 
     @Override
-    protected ObservableTransformer<Object, T> handleResult() {
+    public ObservableTransformer<Object, T> handleResult() {
         return new ObservableTransformer<Object, T>() {
             @Override
             public ObservableSource<T> apply(Observable<Object> upstream) {
@@ -57,14 +57,14 @@ public class RxJavaHelper<T> extends AbsRxJavaHelper<T> {
                                     }
                                 }
                             } else {
-                                if (isFailResultObject) {
+                                if (isFailResultObject()) {
                                     return HttpInterface.createData(null);
                                 } else {
                                     return Observable.error(new ApiException(bean));
                                 }
                             }
                         } else {
-                            return createData((T) o);
+                            return HttpInterface.createData((T) o);
                         }
                     }
                 }).subscribeOn(Schedulers.io())

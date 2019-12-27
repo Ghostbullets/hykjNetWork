@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
             Map<String, String> map = new HashMap<>();
             RxJavaHelper.getInstance().toSubscribe(ApiFactory.getInstance().login(map), true, null, ActivityEvent.DESTROY,new ProgressSubscribe<String>(MainActivity.this) {
                 @Override
-                protected void onResponse(String s) {
+                public void onResponse(String s) {
 
                 }
             });
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
             RxJavaHelper.getInstance().zipToSubscribe(ApiFactory.getInstance().login(map), ApiFactory.getInstance().login(map)
                     , true,null, ActivityEvent.DESTROY, new ProgressSubscribe<ResultData<String, String>>(MainActivity.this) {
                         @Override
-                        protected void onResponse(ResultData<String, String> result) {
+                        public void onResponse(ResultData<String, String> result) {
 
                         }
                     });
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
             RxJavaHelper.getInstance().toSubscribe(ApiFactory.getInstance().register(RequestBody.create(MediaType.parse("application/json;charset=utf-8")
                     , new Gson().toJson(map))),null, ActivityEvent.DESTROY, new ProgressSubscribe(MainActivity.this) {
                 @Override
-                protected void onResponse(Object o) {
+                public void onResponse(Object o) {
 
                 }
             });

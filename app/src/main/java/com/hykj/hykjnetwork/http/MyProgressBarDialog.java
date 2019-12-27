@@ -28,7 +28,7 @@ import com.hykj.network.utils.ReflectUtils;
 public class MyProgressBarDialog extends DialogFragment {
     private static final String TAG = MyProgressBarDialog.class.getSimpleName();
     FragmentActivity mActivity;
-    private String message;
+    private CharSequence message;
     private boolean isCancel = false;
     private ProgressCancelListener progressCancelListener;
 
@@ -99,7 +99,7 @@ public class MyProgressBarDialog extends DialogFragment {
      *
      * @param message 弹窗信息
      */
-    public void showProgress(String message) {
+    public void showProgress(CharSequence message) {
         if (mActivity != null) {
             this.message = message;
             FragmentManager manager = mActivity.getSupportFragmentManager();
